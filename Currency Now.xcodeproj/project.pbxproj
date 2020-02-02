@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B281C36F23E6606400003AB6 /* AddCurrencyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B281C36E23E6606400003AB6 /* AddCurrencyView.swift */; };
 		B29FFD8123E641F3008969C6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29FFD8023E641F3008969C6 /* AppDelegate.swift */; };
 		B29FFD8323E641F3008969C6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29FFD8223E641F3008969C6 /* SceneDelegate.swift */; };
 		B29FFD8523E641F3008969C6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29FFD8423E641F3008969C6 /* ContentView.swift */; };
@@ -39,6 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B281C36E23E6606400003AB6 /* AddCurrencyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCurrencyView.swift; sourceTree = "<group>"; };
 		B29FFD7D23E641F3008969C6 /* Currency Now.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Currency Now.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B29FFD8023E641F3008969C6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B29FFD8223E641F3008969C6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 			children = (
 				B29FFD8023E641F3008969C6 /* AppDelegate.swift */,
 				B29FFD8223E641F3008969C6 /* SceneDelegate.swift */,
+				B281C36E23E6606400003AB6 /* AddCurrencyView.swift */,
 				B29FFD8423E641F3008969C6 /* ContentView.swift */,
 				B29FFDB223E64275008969C6 /* Currency.swift */,
 				B29FFDB823E64969008969C6 /* CurrencyItemView.swift */,
@@ -286,6 +289,7 @@
 				B29FFD8323E641F3008969C6 /* SceneDelegate.swift in Sources */,
 				B29FFDB323E64275008969C6 /* Currency.swift in Sources */,
 				B29FFD8523E641F3008969C6 /* ContentView.swift in Sources */,
+				B281C36F23E6606400003AB6 /* AddCurrencyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

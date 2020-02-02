@@ -48,9 +48,14 @@ struct ContentView: View {
                     Text("Done").bold()
                 }
             })
-            
+            Text("Last updated: \(self.lastUpdated)").foregroundColor(.gray).bold()
             }
-        }
+            NavigationLink(destination: AddCurrencyView().environmentObject(self.userData)) {
+                Text("💰")
+            }.frame(width: 46, height: 46, alignment: .center)
+                .background(RoundedRectangle(cornerRadius: 23).foregroundColor(.blue))
+            .foregroundColor(.white).font(.largeTitle)
+        }.padding()
     }
     
     private func loadCurrencies() {
@@ -97,15 +102,11 @@ struct ContentView: View {
 }
 
 extension ContentView {
-    private func decodeData<T>(_ decodeObject: T.Type, _ data: Data) -> T? where T: Codable
-    {
+    private func decodeData<T>(_ decodeObject: T.Type, _ data: Data) -> T? where T: Codable {
         let decoder = JSONDecoder()
-        do
-        {
+        do {
             return try decoder.decode(decodeObject.self, from: data)
-        }
-        catch let jsonErr
-        {
+        } catch let jsonErr {
             print("Error decoding Json ", jsonErr)
             return nil
         }
