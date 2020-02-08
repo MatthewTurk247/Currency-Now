@@ -1,48 +1,41 @@
 //
 //  AddCurrencyView.swift
-//  Currency-SwiftUI
+//  Currency Now
 //
-//  Created by Alex Liu on 2019-06-20.
-//  Copyright © 2018 Alex Liu <alexliubo@gmail.com> All rights reserved.
+//  Created by Matthew Turk on 2/1/20.
+//  Copyright © 2020 Matthew Turk. All rights reserved.
 //
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions:
-//
-//  The above copyright notice and this permission notice shall be included in
-//  all copies or substantial portions of the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-//  THE SOFTWARE.
 
 import Foundation
 import SwiftUI
 
 struct AddCurrencyView : View {
     @EnvironmentObject var userData: UserData
+    @Binding var isPresented: Bool
+    @State var selectKeeper = Set<Currency>()
     
     var body: some View {
-        List {
-            ForEach(userData.allCurrencies) { currency in
-                return HStack {
-                    Button(action: { self.select(currency) }) {
-                        Text("\(currency.code) - \(currency.name)")
-                    }
-                    Spacer()
-                    if self.isSelected(currency) {
-                        Image(systemName: "checkmark").foregroundColor(.blue)
+        NavigationView {
+            List {
+                ForEach(userData.allCurrencies) { currency in
+                    return HStack {
+//                        SelectableRow(currency: currency, selectedItems: self.$selectKeeper)
+                        Button(action: { self.select(currency) }) {
+                            Text("\(currency.code) - \(currency.name)")
+                        }
+                        Spacer()
+                        if self.isSelected(currency) {
+                            Image(systemName: "checkmark").foregroundColor(.blue)
+                        }
                     }
                 }
-            }
-        }.navigationBarTitle("Add Currency")
+            }.navigationBarTitle(Text("Add Currency"), displayMode: .inline)
+            .navigationBarItems(trailing: Button(action: {
+                self.isPresented.toggle()
+            }) {
+                Text("Done").bold()
+            })
+        }
     }
     
     private func select(_ currency: Currency) {
@@ -59,4 +52,27 @@ struct AddCurrencyView : View {
     }
 }
 
+struct SelectableRow: View {
+    var currency: Currency
 
+    @Binding var selectedItems: Set<Currency>
+    var isSelected: Bool {
+        selectedItems.contains(currency)
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            HStack {
+                Text("\(self.currency.code) - \(self.currency.name)").frame(width: geo.size.width, height: geo.size.height, alignment: .leading)
+            }.background(self.isSelected ? Image(systemName: "checkmark").foregroundColor(.blue) : Image(systemName: "").foregroundColor(.blue))
+            .onTapGesture {
+                if self.isSelected {
+                    self.selectedItems.remove(self.currency)
+                } else {
+                    self.selectedItems.insert(self.currency)
+                }
+
+            }
+        }
+    }
+}

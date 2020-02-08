@@ -1,5 +1,5 @@
 //
-//  CurrencyItemView.swift
+//  CurrencyRow.swift
 //  Currency Now
 //
 //  Created by Matthew Turk on 2/1/20.
@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct CurrencyItemView: View {
+struct CurrencyRow: View {
     @EnvironmentObject var userData: UserData
     let currency: Currency
     let baseAmount: Double

@@ -13,6 +13,7 @@ struct ContentView: View {
     @State var baseAmount: String = "1.0"
     @State var isEditing: Bool = false
     @State var lastUpdated: String = ""
+    @State var showingDetail = false
  
     var body: some View {
         ZStack {
@@ -20,7 +21,7 @@ struct ContentView: View {
             Text("From:").bold().foregroundColor(.gray)
             HStack {
                 // Flag
-                    Text("\(userData.baseCurrency.flag)").padding(5)
+                Text("\(userData.baseCurrency.flag)").padding(5)
                     // Code and name
                     VStack(alignment: .leading){
                         Text(userData.baseCurrency.code).foregroundColor(.white)
@@ -28,7 +29,7 @@ struct ContentView: View {
                     }
                     Spacer()
                     // Amount and conversion
-                TextField("1.0", text: $baseAmount)
+                TextField("1.0", text: $baseAmount).keyboardType(.numberPad)
                     .foregroundColor(.white)
                 .background(
                     RoundedRectangle(cornerRadius: 5).foregroundColor(.clear)
@@ -37,26 +38,31 @@ struct ContentView: View {
             Text("To:").bold().foregroundColor(.gray)
             List {
                 ForEach(userData.userCurrency) { currency in
-                    CurrencyItemView(currency: currency, baseAmount: Double(self.baseAmount) ?? 1.0, isEditing:             self.$isEditing).onTapGesture {
-                            self.userData.baseCurrency = currency
+                    NavigationLink(destination: DetailView(fromCurrency: self.userData.baseCurrency, toCurrency: currency)) {
+                        CurrencyRow(currency: currency, baseAmount: Double(self.baseAmount) ?? 1.0, isEditing:             self.$isEditing)
                     }
-                    }
-            }.onAppear(perform: loadCurrencies).navigationBarTitle(Text("Currencies")).navigationBarItems(trailing: Button(action: { self.isEditing.toggle() }) {
-                if !self.isEditing {
-                    Text("Edit")
-                } else {
-                    Text("Done").bold()
-                }
-            })
+                }.onDelete(perform: delete)
+            }.onAppear(perform: loadCurrencies).navigationBarTitle(Text("Currencies")).navigationBarItems(leading: Button(action: {
+                self.showingDetail.toggle()
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title)
+            }, trailing: EditButton()).sheet(isPresented: $showingDetail, content: {AddCurrencyView(isPresented: self.$showingDetail).environmentObject(self.userData)})
             Text("Last updated: \(self.lastUpdated)").foregroundColor(.gray).bold()
             }
-            NavigationLink(destination: AddCurrencyView().environmentObject(self.userData)) {
-                Text("💰")
-            }.frame(width: 46, height: 46, alignment: .center)
-                .background(RoundedRectangle(cornerRadius: 23).foregroundColor(.blue))
-            .foregroundColor(.white).font(.largeTitle)
+            
         }.padding()
     }
+    
+    func delete(at offsets: IndexSet) {
+        userData.userCurrency.remove(atOffsets: offsets)
+    }
+    
+//    NavigationLink(destination: AddCurrencyView().environmentObject(self.userData)) {
+//        Text("💰")
+//    }.frame(width: 46, height: 46, alignment: .center)
+//        .background(RoundedRectangle(cornerRadius: 23).foregroundColor(.blue))
+//    .foregroundColor(.white).font(.largeTitle)
     
     private func loadCurrencies() {
         // Check if last updated is the same date

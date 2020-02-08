@@ -31,6 +31,18 @@ struct CurrencyList: Codable{
     let rates: [String: Double]
 }
 
+struct CurrencyRates: Codable {
+    let rates: [String: [String: Double]]
+    let startAt, base, endAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case rates
+        case startAt = "start_at"
+        case base
+        case endAt = "end_at"
+    }
+}
+
 /// All supported currencies
 let supportedCurrencies: [String: [String]] = [
     "THB": ["Thai baht", "TH"],

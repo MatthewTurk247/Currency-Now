@@ -26,7 +26,7 @@
 import Foundation
 import SwiftUI
 
-struct Currency: Equatable, Hashable, Codable, Identifiable{
+struct Currency: Equatable, Hashable, Codable, Identifiable {
     let id: UUID
     let name: String
     
