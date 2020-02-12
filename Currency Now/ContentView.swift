@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var userData: UserData
-    @State var baseAmount: String = "1.0"
+    @State var baseAmount: String = "1"
     @State var isEditing: Bool = false
     @State var lastUpdated: String = ""
     @State var showingDetail = false
@@ -18,7 +18,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
            VStack(alignment: .leading) {
-            Text("From:").bold().foregroundColor(.gray)
+            Text("FROM:").bold().foregroundColor(.gray)
             HStack {
                 // Flag
                 Text("\(userData.baseCurrency.flag)").padding(5)
@@ -29,13 +29,14 @@ struct ContentView: View {
                     }
                     Spacer()
                     // Amount and conversion
-                TextField("1.0", text: $baseAmount).keyboardType(.numberPad)
-                    .foregroundColor(.white)
+                TextField("1", text: $baseAmount).keyboardType(.numberPad)
+                    .foregroundColor(.black).background(Rectangle().foregroundColor(.white).cornerRadius(5))
                 .background(
                     RoundedRectangle(cornerRadius: 5).foregroundColor(.clear)
-                )
+                    ).multilineTextAlignment(.center).modifier(DismissingKeyboard())
+                Spacer()
                 }.background(Color.blue).cornerRadius(5)
-            Text("To:").bold().foregroundColor(.gray)
+            Text("TO:").bold().foregroundColor(.gray)
             List {
                 ForEach(userData.userCurrency) { currency in
                     NavigationLink(destination: DetailView(fromCurrency: self.userData.baseCurrency, toCurrency: currency)) {
@@ -105,6 +106,21 @@ struct ContentView: View {
         task.resume()
     }
     
+}
+
+struct DismissingKeyboard: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .onTapGesture {
+                let keyWindow = UIApplication.shared.connectedScenes
+                        .filter({$0.activationState == .foregroundActive})
+                        .map({$0 as? UIWindowScene})
+                        .compactMap({$0})
+                        .first?.windows
+                        .filter({$0.isKeyWindow}).first
+                keyWindow?.endEditing(true)
+        }
+    }
 }
 
 extension ContentView {

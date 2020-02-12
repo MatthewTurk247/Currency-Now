@@ -8,9 +8,9 @@
 
 import Foundation
 import SwiftUI
-import SwiftUICharts
 import Alamofire
 import SwiftDate
+import SwiftUICharts
 
 struct DetailView: View {
 
@@ -23,16 +23,28 @@ struct DetailView: View {
 //    }
     
     var body: some View {
-        VStack {
-            LineView(data: exchangeRates, title: "Chart", legend: "", style: Styles.lineChartStyleOne, valueSpecifier: "%.12f").padding()
+        VStack(alignment: .leading) {
+            Spacer()
+            LineChart(data: $exchangeRates)
+//            LineView(data: exchangeRates, title: String((exchangeRates.last ?? 0)/10), legend: "Down _% today", style: Styles.lineChartStyleOne, valueSpecifier: "%.12f")
 //            LineView(data: exchangeRates, title: "Chart", valueSpecifier: "%.12f").padding()
 //            Chart(data: exchangeRates)
 //            .chartStyle(
 //                LineChartStyle(.line, lineColor: .blue, lineWidth: 5)
 //            )
 
-            }.onAppear(perform: loadData).navigationBarTitle(Text("\(fromCurrency.code) to \(toCurrency.code)"))
-    }
+            Spacer(minLength: 150)
+            Text("Stats").font(.title).bold()
+            HStack {
+                List {
+                    Text("hello")
+                }
+                List {
+                    Text("hello")
+                }
+            }
+            }.onAppear(perform: loadData).navigationBarTitle(Text("\(fromCurrency.code) to \(toCurrency.code)")).padding()
+        }
     
     private func loadData() {
         // Check if last updated is the same date
@@ -49,7 +61,7 @@ struct DetailView: View {
                     
                     
                     for rate in decoded.rates.sorted(by: { $0.key < $1.key }) {
-                        let exchangeRate = Double(10*rate.value[self.fromCurrency.code]!)/Double(rate.value[self.toCurrency.code]!)
+                        let exchangeRate = Double(rate.value[self.fromCurrency.code]!)/Double(rate.value[self.toCurrency.code]!)
 //                        print(exchangeRate)
                         self.keys.append(rate.key)
                         self.exchangeRates.append(exchangeRate)
