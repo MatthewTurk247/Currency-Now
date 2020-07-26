@@ -21,29 +21,52 @@ struct DetailView: View {
 //    var vals: [(key: String, value: Double)] {
 //        zip(keys, exchangeRates).map { ($0, $1) }
 //    }
+    @State private var selectKeeper = 0
+    let newsAPIKey = "127f06e85b3a49bf91ac8e3ce8ace028"
+    @State var articles = [Article]()
     
     var body: some View {
         VStack(alignment: .leading) {
             Spacer()
-            LineChart(data: $exchangeRates)
-//            LineView(data: exchangeRates, title: String((exchangeRates.last ?? 0)/10), legend: "Down _% today", style: Styles.lineChartStyleOne, valueSpecifier: "%.12f")
+//            LineChart(data: $exchangeRates, interval: $selectKeeper)
+//            LineView(data: exchangeRates, title: String(exchangeRates.last ?? 0), legend: "Down _% today", style: Styles.lineChartStyleOne, valueSpecifier: "%.12f")
 //            LineView(data: exchangeRates, title: "Chart", valueSpecifier: "%.12f").padding()
 //            Chart(data: exchangeRates)
 //            .chartStyle(
 //                LineChartStyle(.line, lineColor: .blue, lineWidth: 5)
 //            )
 
-            Spacer(minLength: 150)
+            Picker(selection: $selectKeeper, label: Text("What is your favorite color?")) {
+                Text("1D").tag(0)
+                Text("1W").tag(1)
+                Text("1M").tag(2)
+                Text("1Y").tag(3)
+            }.pickerStyle(SegmentedPickerStyle())
+            
+            Spacer(minLength: 20)
             Text("Stats").font(.title).bold()
             HStack {
                 List {
-                    Text("hello")
-                }
+                    Text("High")
+                    Text("Low")
+                }.disabled(true)
                 List {
-                    Text("hello")
+                    Text("Average")
+                    Text("Volatility")
+                }.disabled(true)
+            }
+            ScrollView(.horizontal) {
+                HStack(spacing: 20) {
+                    ForEach(articles, id: \.self) { article in
+                        Text("Item")
+                            .foregroundColor(.white)
+                            .font(.largeTitle)
+                            .frame(width: 200, height: 100)
+                            .background(Color.blue)
+                    }
                 }
             }
-            }.onAppear(perform: loadData).navigationBarTitle(Text("\(fromCurrency.code) to \(toCurrency.code)")).padding()
+            }.onAppear(perform: loadData).navigationBarTitle(Text("\(fromCurrency.code) per \(toCurrency.code)")).padding()
         }
     
     private func loadData() {
@@ -71,6 +94,19 @@ struct DetailView: View {
             }
         })
         task.resume()
+        
+        let newsURL = URL(string: "https://newsapi.org/v2/everything?q=\(toCurrency.name)&sortBy=popularity&apiKey=\(newsAPIKey)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
+
+        let newsCall = URLSession.shared.dataTask(with: newsURL, completionHandler: { (data, response, error) in
+          if let data = data {
+          if let decoded: NetworkResponse = self.decodeData(NetworkResponse.self, data) {
+            print(decoded.articles)
+            self.articles = decoded.articles ?? []
+            }
+            }
+        })
+
+        newsCall.resume()
     }
     
 }

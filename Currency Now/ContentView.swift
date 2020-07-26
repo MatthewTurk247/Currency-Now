@@ -7,106 +7,104 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct ContentView: View {
     @EnvironmentObject var userData: UserData
-    @State var baseAmount: String = "1"
+    @State var baseAmount: String = "1.0"
     @State var isEditing: Bool = false
     @State var lastUpdated: String = ""
     @State var showingDetail = false
+    @State private var triggerAnimation = false
+    @State private var showNewCoinPicker = false
+    @State private var editButton = "Constants.editText.localizedString()"
+    @State private var showCoinComparison: Bool = false
+    @ObservedObject var rates = Rates()
+    @EnvironmentObject var mainVM: MainViewModel
+    @Environment(\.editMode) var editMode
  
     var body: some View {
-        ZStack {
-           VStack(alignment: .leading) {
-            Text("FROM:").bold().foregroundColor(.gray)
-            HStack {
-                // Flag
-                Text("\(userData.baseCurrency.flag)").padding(5)
-                    // Code and name
-                    VStack(alignment: .leading){
-                        Text(userData.baseCurrency.code).foregroundColor(.white)
-                        Text(userData.baseCurrency.name).foregroundColor(.white)
-                    }
-                    Spacer()
-                    // Amount and conversion
-                TextField("1", text: $baseAmount).keyboardType(.numberPad)
-                    .foregroundColor(.black).background(Rectangle().foregroundColor(.white).cornerRadius(5))
-                .background(
-                    RoundedRectangle(cornerRadius: 5).foregroundColor(.clear)
-                    ).multilineTextAlignment(.center).modifier(DismissingKeyboard())
-                Spacer()
-                }.background(Color.blue).cornerRadius(5)
-            Text("TO:").bold().foregroundColor(.gray)
-            List {
-                ForEach(userData.userCurrency) { currency in
-                    NavigationLink(destination: DetailView(fromCurrency: self.userData.baseCurrency, toCurrency: currency)) {
-                        CurrencyRow(currency: currency, baseAmount: Double(self.baseAmount) ?? 1.0, isEditing:             self.$isEditing)
-                    }
-                }.onDelete(perform: delete)
-            }.onAppear(perform: loadCurrencies).navigationBarTitle(Text("Currencies")).navigationBarItems(leading: Button(action: {
-                self.showingDetail.toggle()
-            }) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title)
-            }, trailing: EditButton()).sheet(isPresented: $showingDetail, content: {AddCurrencyView(isPresented: self.$showingDetail).environmentObject(self.userData)})
-            Text("Last updated: \(self.lastUpdated)").foregroundColor(.gray).bold()
-            }
-            
-        }.padding()
-    }
-    
-    func delete(at offsets: IndexSet) {
-        userData.userCurrency.remove(atOffsets: offsets)
-    }
-    
-//    NavigationLink(destination: AddCurrencyView().environmentObject(self.userData)) {
-//        Text("💰")
-//    }.frame(width: 46, height: 46, alignment: .center)
-//        .background(RoundedRectangle(cornerRadius: 23).foregroundColor(.blue))
-//    .foregroundColor(.white).font(.largeTitle)
-    
-    private func loadCurrencies() {
-        // Check if last updated is the same date
-        // if not the same pull from remote with base currency
-        let url = URL(string: "https://api.exchangeratesapi.io/latest?base=USD")!
-
-        let task = URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
-            if let data = data {
-                if let decoded: CurrencyList = self.decodeData(CurrencyList.self, data){
-                    //
-                    self.lastUpdated = decoded.date
-                    
-                    // generate currency data
-                    var newCurrencies = [Currency]()
-                    for key in decoded.rates.keys {
-                        let newCurrency = Currency(name: supportedCurrencies[key]?[0] ?? "Unknown", rate: 1.0 / (decoded.rates[key] ?? 1.0), symbol: supportedCurrencies[key]?[1] ?? "", code: key)
-                        newCurrencies.append(newCurrency)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        self.userData.allCurrencies = newCurrencies
+        VStack {
+            VStack(alignment: .leading) {
+                    List {
                         
-                        if let base = self.userData.allCurrencies.filter({ $0.symbol == self.userData.baseCurrency.symbol }).first {
-                            self.userData.baseCurrency = base
+                            ForEach(mainVM.userChosenCoins ?? [], id: \.self) { item in
+                                NavigationLink(destination: Calculator(showModel: self.$showCoinComparison, toggle: self.$triggerAnimation, coinIhave: item[arrayIndex.left], coinIwant: item[arrayIndex.right]).animation(.spring()).transition(.move(edge: .top)).environment(\.layoutDirection, .leftToRight)) {
+                                    
+                                    Button(action: {
+                                        self.mainVM.coinIHave.coinCode = item[arrayIndex.left]
+                                        self.mainVM.coinIWant.coinCode = item[arrayIndex.right]
+                                        self.editMode?.wrappedValue = EditMode.inactive
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            self.triggerAnimation = true
+                                        }
+                                        self.showCoinComparison = true
+                                    }) {
+                                        HStack  {
+                                            VStack (alignment: .leading) {
+                                                HStack {
+                                                    Coin(coinCode: item[arrayIndex.left]).coinImage
+                                                        .resizable()
+                                                        .frame(width: 25, height: 25)
+                                                        .cornerRadius(90)
+                                                    Text(Coin(coinCode: item[arrayIndex.left]).coinCode)
+                                                    
+                                                    self.rates.returnRateChange(coinCode: item[arrayIndex.left])
+                                                    Spacer(minLength: 1)
+                                                }
+                                                Text(Coin(coinCode: item[arrayIndex.left]).coinName)
+                                                    .foregroundColor(.gray)
+                                            }.padding(.leading, 10)
+                                            
+                                            Image(systemName: "arrow.right.arrow.left").resizable()
+                                                .frame(width: 20, height: 20)
+                                            
+                                            VStack (alignment: .trailing) {
+                                                HStack {
+                                                    Spacer(minLength: 1)
+                                                    self.rates.returnRateChange(coinCode: item[1])
+                                                    Text(Coin(coinCode: item[arrayIndex.right]).coinCode)
+                                                        .foregroundColor(.red)
+                                                    Coin(coinCode: item[arrayIndex.right]).coinImage
+                                                        .resizable()
+                                                        .frame(width: 25, height: 25)
+                                                        .cornerRadius(90)
+                                                }
+                                                Text(Coin(coinCode: item[arrayIndex.right]).coinName)
+                                                    .foregroundColor(.gray)
+                                            }.padding(.trailing, 10)
+                                                .frame(height: 80)
+                                        }
+                                    }
                         }
+                            }.onDelete(perform: mainVM.delete(at:))
+                                .onMove(perform: mainVM.move)
                         
-                        var tempNewUserCurrency = [Currency]()
-                        let userCurrencies = self.userData.userCurrency.map{ $0.code }
-                        for c in self.userData.allCurrencies {
-                            if userCurrencies.contains(c.code){
-                                tempNewUserCurrency.append(c)
-                            }
-                        }
-                        
-                        self.userData.userCurrency = tempNewUserCurrency
                     }
                 }
-            }
+                .animation(Animation.spring())
+                .transition(.move(edge: .bottom))
+                .onAppear() {
+                    DispatchQueue.global().async {
+                        self.mainVM.firstAppLaunch()
+                        if self.mainVM.coinList == [] {
+                            self.mainVM.callService()
+                            self.rates.callService()
+                        }
+                    }
+                }.navigationBarTitle("Currency Now").navigationBarItems(leading: Button(action: {
+                                        self.mainVM.coinIHave = Coin(coinCode: Locale.current.currencyCode ?? "")
+                self.mainVM.coinIWant = Coin(coinCode: "")
+                self.showingDetail = true
+                self.editMode?.wrappedValue = EditMode.inactive
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title)}, trailing: EditButton())
+        }.sheet(isPresented: $showingDetail, content: {
+            NewCoinPicker(showModel: self.$showingDetail).environmentObject(self.mainVM)
         })
-        task.resume()
+        }
     }
-    
-}
 
 struct DismissingKeyboard: ViewModifier {
     func body(content: Content) -> some View {
@@ -121,6 +119,11 @@ struct DismissingKeyboard: ViewModifier {
                 keyWindow?.endEditing(true)
         }
     }
+}
+
+private struct arrayIndex  {
+    static let left = 0
+    static let right = 1
 }
 
 extension ContentView {
