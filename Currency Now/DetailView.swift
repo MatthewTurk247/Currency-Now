@@ -6,16 +6,11 @@
 //  Copyright © 2020 Matthew Turk. All rights reserved.
 //
 
-import Foundation
-import SwiftUI
-import Alamofire
-import SwiftDate
-import SwiftUICharts
-
+/*
 struct DetailView: View {
 
-    var fromCurrency: Currency
-    var toCurrency: Currency
+    var heldCurrency: Currency
+    var desiredCurrency: Currency
     @State var keys = [String]()
     @State var exchangeRates = [Double]()
 //    var vals: [(key: String, value: Double)] {
@@ -66,7 +61,7 @@ struct DetailView: View {
                     }
                 }
             }
-            }.onAppear(perform: loadData).navigationBarTitle(Text("\(fromCurrency.code) per \(toCurrency.code)")).padding()
+            }.onAppear(perform: loadData).navigationBarTitle(Text("\(heldCurrency.code) per \(desiredCurrency.code)")).padding()
         }
     
     private func loadData() {
@@ -74,7 +69,7 @@ struct DetailView: View {
         // if not the same pull from remote with base currency
         
         let weekAgo = Date() - 1.weeks
-        let url = URL(string: "https://api.exchangeratesapi.io/history?symbols=\(fromCurrency.code),\(toCurrency.code)&start_at=\(weekAgo.year)-\(weekAgo.month)-\(weekAgo.day)&end_at=\(Date().year)-\(Date().month)-\(Date().day)")!
+        let url = URL(string: "https://api.exchangeratesapi.io/history?symbols=\(heldCurrency.code),\(desiredCurrency.code)&start_at=\(weekAgo.year)-\(weekAgo.month)-\(weekAgo.day)&end_at=\(Date().year)-\(Date().month)-\(Date().day)")!
 
         let task = URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
             if let data = data {
@@ -84,7 +79,7 @@ struct DetailView: View {
                     
                     
                     for rate in decoded.rates.sorted(by: { $0.key < $1.key }) {
-                        let exchangeRate = Double(rate.value[self.fromCurrency.code]!)/Double(rate.value[self.toCurrency.code]!)
+                        let exchangeRate = Double(rate.value[self.heldCurrency.code]!)/Double(rate.value[self.desiredCurrency.code]!)
 //                        print(exchangeRate)
                         self.keys.append(rate.key)
                         self.exchangeRates.append(exchangeRate)
@@ -95,7 +90,7 @@ struct DetailView: View {
         })
         task.resume()
         
-        let newsURL = URL(string: "https://newsapi.org/v2/everything?q=\(toCurrency.name)&sortBy=popularity&apiKey=\(newsAPIKey)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
+        let newsURL = URL(string: "https://newsapi.org/v2/everything?q=\(desiredCurrency.name)&sortBy=popularity&apiKey=\(newsAPIKey)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
 
         let newsCall = URLSession.shared.dataTask(with: newsURL, completionHandler: { (data, response, error) in
           if let data = data {
@@ -122,3 +117,4 @@ extension DetailView {
         }
     }
 }
+*/

@@ -9,121 +9,103 @@
 import SwiftUI
 import Foundation
 
-struct ContentView: View {
-    @EnvironmentObject var userData: UserData
-    @State var baseAmount: String = "1.0"
-    @State var isEditing: Bool = false
-    @State var lastUpdated: String = ""
-    @State var showingDetail = false
-    @State private var triggerAnimation = false
-    @State private var showNewCoinPicker = false
-    @State private var editButton = "Constants.editText.localizedString()"
-    @State private var showCoinComparison: Bool = false
-    @ObservedObject var rates = Rates()
-    @EnvironmentObject var mainVM: MainViewModel
-    @Environment(\.editMode) var editMode
- 
-    var body: some View {
-        VStack {
-            VStack(alignment: .leading) {
-                    List {
-                        
-                            ForEach(mainVM.userChosenCoins ?? [], id: \.self) { item in
-                                NavigationLink(destination: Calculator(showModel: self.$showCoinComparison, toggle: self.$triggerAnimation, coinIhave: item[arrayIndex.left], coinIwant: item[arrayIndex.right]).animation(.spring()).transition(.move(edge: .top)).environment(\.layoutDirection, .leftToRight)) {
-                                    
-                                    Button(action: {
-                                        self.mainVM.coinIHave.coinCode = item[arrayIndex.left]
-                                        self.mainVM.coinIWant.coinCode = item[arrayIndex.right]
-                                        self.editMode?.wrappedValue = EditMode.inactive
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                            self.triggerAnimation = true
-                                        }
-                                        self.showCoinComparison = true
-                                    }) {
-                                        HStack  {
-                                            VStack (alignment: .leading) {
-                                                HStack {
-                                                    Coin(coinCode: item[arrayIndex.left]).coinImage
-                                                        .resizable()
-                                                        .frame(width: 25, height: 25)
-                                                        .cornerRadius(90)
-                                                    Text(Coin(coinCode: item[arrayIndex.left]).coinCode)
-                                                    
-                                                    self.rates.returnRateChange(coinCode: item[arrayIndex.left])
-                                                    Spacer(minLength: 1)
-                                                }
-                                                Text(Coin(coinCode: item[arrayIndex.left]).coinName)
-                                                    .foregroundColor(.gray)
-                                            }.padding(.leading, 10)
-                                            
-                                            Image(systemName: "arrow.right.arrow.left").resizable()
-                                                .frame(width: 20, height: 20)
-                                            
-                                            VStack (alignment: .trailing) {
-                                                HStack {
-                                                    Spacer(minLength: 1)
-                                                    self.rates.returnRateChange(coinCode: item[1])
-                                                    Text(Coin(coinCode: item[arrayIndex.right]).coinCode)
-                                                        .foregroundColor(.red)
-                                                    Coin(coinCode: item[arrayIndex.right]).coinImage
-                                                        .resizable()
-                                                        .frame(width: 25, height: 25)
-                                                        .cornerRadius(90)
-                                                }
-                                                Text(Coin(coinCode: item[arrayIndex.right]).coinName)
-                                                    .foregroundColor(.gray)
-                                            }.padding(.trailing, 10)
-                                                .frame(height: 80)
-                                        }
-                                    }
-                        }
-                            }.onDelete(perform: mainVM.delete(at:))
-                                .onMove(perform: mainVM.move)
-                        
-                    }
-                }
-                .animation(Animation.spring())
-                .transition(.move(edge: .bottom))
-                .onAppear() {
-                    DispatchQueue.global().async {
-                        self.mainVM.firstAppLaunch()
-                        if self.mainVM.coinList == [] {
-                            self.mainVM.callService()
-                            self.rates.callService()
-                        }
-                    }
-                }.navigationBarTitle("Currency Now").navigationBarItems(leading: Button(action: {
-                                        self.mainVM.coinIHave = Coin(coinCode: Locale.current.currencyCode ?? "")
-                self.mainVM.coinIWant = Coin(coinCode: "")
-                self.showingDetail = true
-                self.editMode?.wrappedValue = EditMode.inactive
-            }) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title)}, trailing: EditButton())
-        }.sheet(isPresented: $showingDetail, content: {
-            NewCoinPicker(showModel: self.$showingDetail).environmentObject(self.mainVM)
-        })
-        }
-    }
+extension Color {
 
-struct DismissingKeyboard: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .onTapGesture {
-                let keyWindow = UIApplication.shared.connectedScenes
-                        .filter({$0.activationState == .foregroundActive})
-                        .map({$0 as? UIWindowScene})
-                        .compactMap({$0})
-                        .first?.windows
-                        .filter({$0.isKeyWindow}).first
-                keyWindow?.endEditing(true)
-        }
-    }
+    static let background = Color("background")
+    static let backgroundAccent = Color("backgroundAccent")
+    
+    static let textBody = Color("textBody")
+    static let textSecondary = Color("textSecondary")
+    static let textStrong = Color("textStrong")
+    static let keypadKey = Color("keypadKey")
+    
+    static let button = Color("button")
+    static let buttonSecondary = Color("buttonSecondary")
+    static let primary = Color("primary")
+    static let secondary = Color("secondary")
+    
 }
 
-private struct arrayIndex  {
-    static let left = 0
-    static let right = 1
+struct ContentView: View {
+ 
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @ObservedObject var model: ViewModel = ViewModel()
+
+    @State private var showCurrencySelection: Bool = false
+    @State private var showErrorAlert: Bool = false
+    @State private var exchange: Exchange = Exchange(
+        primary: Currency(name: "USD", fullName: "United States Dollar".localized(), continent: .NorthAmerica),
+        secondary: Currency(name: "GBP", fullName: "British Pound Sterling".localized(), continent: .Europe)
+    )
+    @State private var selection: String = "primary"
+
+    @FetchRequest(entity: ManagedRate.entity(), sortDescriptors: []) var managedRates: FetchedResults<ManagedRate>
+    @FetchRequest(entity: ManagedCurrencyRate.entity(), sortDescriptors: []) var managedCurrencyRates: FetchedResults<ManagedCurrencyRate>
+
+    var body: some View {
+        NavigationView {
+            GeometryReader { geometry in
+
+            VStack(spacing: 0) {
+                
+                HStack {
+
+                // Exchange Display
+                    ExchangeDisplay(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
+                }
+                // On Results Fetched
+                if self.model.ratesFetched {
+                    Text("")
+                        .frame(width: 0, height: 0)
+                        .onAppear {
+                            DispatchQueue.main.async {
+                                self.clearExistingRates()
+                                self.storeRatesLocally()
+                                self.updateExchanges()
+                            }
+                        }
+                }
+
+                // On Result Error
+                if self.model.error != nil {
+                    Text("")
+                        .frame(width: 0, height: 0)
+                        .onAppear {
+                            self.showErrorAlert = true
+                        }
+                        .alert(isPresented: self.$showErrorAlert) {
+                            Alert(
+                                title: Text("ErrorNetTitle"),
+                                message: Text("ErrorNetBody"),
+                                primaryButton: .default(Text("ErrorRetry")) {
+                                    self.showErrorAlert = false
+                                    self.model.reFetchCurrencyRates()
+                                },
+                                secondaryButton: .cancel(Text("ErrorBack"))
+                            )
+                        }
+                }
+
+                // Keypad
+                Keypad(exchange: self.$exchange)
+                    .background(Color.backgroundAccent)
+                    .cornerRadius(Constants.large)
+                    .padding(.leading)
+                    .padding(.trailing)
+                    .padding(.bottom, geometry.safeAreaInsets.bottom)
+                    .frame(
+                        width: geometry.size.width,
+                        height: geometry.size.height / Constants.keypadHeightRatio
+                    )
+            }
+            .background(Color.background)
+            .edgesIgnoringSafeArea(.bottom)
+            .navigationBarTitle("Currency Now")
+        }
+        }
+
+    }
+    
 }
 
 extension ContentView {
@@ -132,8 +114,63 @@ extension ContentView {
         do {
             return try decoder.decode(decodeObject.self, from: data)
         } catch let jsonErr {
-            print("Error decoding Json ", jsonErr)
+            print("Error decoding JSON.", jsonErr)
             return nil
+        }
+    }
+    
+    private func updateExchanges() {
+        updatePrimaryExchangeRate()
+        updateSecondaryExchangeRate()
+    }
+
+    private func updatePrimaryExchangeRate() {
+        guard let pmr = (self.managedRates.first { r in r.base == exchange.primary.name}) else {
+            return
+        }
+        let pmrRates = self.managedCurrencyRates.filter { cr in cr.rateId == pmr.id }
+        exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
+    }
+
+    private func updateSecondaryExchangeRate() {
+        guard let smr = (self.managedRates.first { r in r.base == exchange.secondary.name}) else {
+            return
+        }
+        let smrRates = self.managedCurrencyRates.filter { cr in cr.rateId == smr.id }
+        exchange.secondaryRate = Rate.managedRateAsRate(rate: smr, currencyRates: smrRates)
+    }
+    
+    private func clearExistingRates() {
+        managedRates.forEach { rate in
+            managedObjectContext.delete(rate)
+        }
+
+        do {
+            try managedObjectContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    private func storeRatesLocally() {
+        model.fetchedRates.forEach { rate in
+            let managedRate = ManagedRate(context: managedObjectContext)
+            managedRate.id = rate.id
+            managedRate.base = rate.base
+
+            rate.rates.forEach { key, value in
+                let managedCurrencyRate = ManagedCurrencyRate(context: managedObjectContext)
+                managedCurrencyRate.ofRate = managedRate
+                managedCurrencyRate.name = key
+                managedCurrencyRate.value = NSDecimalNumber(decimal: value)
+                managedCurrencyRate.rateId = rate.id
+            }
+
+            do {
+                try self.managedObjectContext.save()
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
 }
