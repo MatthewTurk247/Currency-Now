@@ -44,46 +44,10 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            GeometryReader { geometry in
-
             VStack(spacing: 0) {
-                
                 HStack {
-
-                // Exchange Display
+                // Exchange
                     ExchangeDisplay(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
-                }
-                // On Results Fetched
-                if self.model.ratesFetched {
-                    Text("")
-                        .frame(width: 0, height: 0)
-                        .onAppear {
-                            DispatchQueue.main.async {
-                                self.clearExistingRates()
-                                self.storeRatesLocally()
-                                self.updateExchanges()
-                            }
-                        }
-                }
-
-                // On Result Error
-                if self.model.error != nil {
-                    Text("")
-                        .frame(width: 0, height: 0)
-                        .onAppear {
-                            self.showErrorAlert = true
-                        }
-                        .alert(isPresented: self.$showErrorAlert) {
-                            Alert(
-                                title: Text("ErrorNetTitle"),
-                                message: Text("ErrorNetBody"),
-                                primaryButton: .default(Text("ErrorRetry")) {
-                                    self.showErrorAlert = false
-                                    self.model.reFetchCurrencyRates()
-                                },
-                                secondaryButton: .cancel(Text("ErrorBack"))
-                            )
-                        }
                 }
 
                 // Keypad
@@ -92,20 +56,61 @@ struct ContentView: View {
                     .cornerRadius(Constants.large)
                     .padding(.leading)
                     .padding(.trailing)
-                    .padding(.bottom, geometry.safeAreaInsets.bottom)
-                    .frame(
-                        width: geometry.size.width,
-                        height: geometry.size.height / Constants.keypadHeightRatio
-                    )
+                     .padding(.bottom)
+//                    .frame(
+//                        width: geometry.size.width,
+//                        height: geometry.size.height / Constants.keypadHeightRatio
+//                    )
+            }
+            .onAppear {
+   
+                
+                let url = URL(string: "https://api.apilayer.com/exchangerates_data/latest?symbols=\(exchange.primary.name)&base=\(exchange.secondary.name)")!
+                
+                var request = URLRequest(url: url,timeoutInterval: Double.infinity)
+                request.httpMethod = "GET"
+                guard let apiKey = ExchangeRatesService.apiKey else { return }
+                request.addValue(apiKey, forHTTPHeaderField: "apikey")
+
+                let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                  guard let data = data else {
+                    print(String(describing: error))
+                    return
+                  }
+                    do {
+                        let parsed = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                        print(parsed)
+                        if let parsed = parsed as? [String: Any] {
+                            print(parsed["base"] as? String)
+                            print(parsed["timestamp"] as? Int)
+                            print(parsed["date"] as? String)
+                            if let rates = parsed["rates"] as? [String: Any] {
+                                print(rates["USD"])
+                            }
+                            
+                            
+                        
+                            
+                            
+//                            exchange.primaryRate = Rate(base: base, date: date, rates: [:])
+                            
+                        
+                            
+                        }
+                        
+                    } catch {
+                        print("error")
+                    }
+//                exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
+                }
+
+                task.resume()
             }
             .background(Color.background)
             .edgesIgnoringSafeArea(.bottom)
             .navigationBarTitle("Currency Now")
         }
-        }
-
     }
-    
 }
 
 extension ContentView {
@@ -125,11 +130,12 @@ extension ContentView {
     }
 
     private func updatePrimaryExchangeRate() {
-        guard let pmr = (self.managedRates.first { r in r.base == exchange.primary.name}) else {
-            return
-        }
-        let pmrRates = self.managedCurrencyRates.filter { cr in cr.rateId == pmr.id }
-        exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
+//        guard let pmr = (self.managedRates.first { r in r.base == exchange.primary.name}) else {
+//            return
+//        }
+//        let pmrRates = self.managedCurrencyRates.filter { cr in cr.rateId == pmr.id }
+        
+//        exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
     }
 
     private func updateSecondaryExchangeRate() {
@@ -173,6 +179,10 @@ extension ContentView {
             }
         }
     }
+}
+
+struct Conversion {
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
