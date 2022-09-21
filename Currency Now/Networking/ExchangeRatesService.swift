@@ -22,6 +22,10 @@ enum ApiPath: String {
 
 extension ExchangeRatesService {
     
+    static func latest() {
+        
+    }
+    
     static func convert(_ amount: Float, from base: Currency, to destination: Currency) {
         var semaphore = DispatchSemaphore (value: 0)
 
@@ -51,39 +55,6 @@ extension ExchangeRatesService {
         task.resume()
         semaphore.wait()
     }
-
-    static func request(_ path: ApiPath, parameters: [String: String]? = nil) -> AnyPublisher<Rate, Error> {
-
-        guard var components = URLComponents(url: baseUrl.appendingPathComponent(path.rawValue), resolvingAgainstBaseURL: true)
-                else { fatalError("Couldn't create URLComponents") }
-
-        if let parameters = parameters {
-            components.queryItems = parameters.map { key, value -> URLQueryItem in
-                return URLQueryItem(name: key, value: value)
-            }
-        }
-//
-//        guard let url = components.url else {
-//            fatalError("Couldn't create URL")
-//        }
-        
-        let url = URL(string: "https://api.apilayer.com/exchangerates_data/latest?symbols=GBP&base=USD")!
-        
-        var request = URLRequest(url: url,timeoutInterval: Double.infinity)
-        request.httpMethod = "GET"
-        
-        return apiClient.run(request).map(\.value).eraseToAnyPublisher()
-
-        return apiClient.run(URLRequest(url: url))
-            .map(\.value)
-            .eraseToAnyPublisher()
-
-    }
-
+    
+    
 }
-
-//private enum Currency {
-//    case USD
-//}
-//
-//Currencyy.USD

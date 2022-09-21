@@ -33,39 +33,28 @@ struct ContentView: View {
 
     @State private var showCurrencySelection: Bool = false
     @State private var showErrorAlert: Bool = false
-    @State private var exchange: Exchange = Exchange(
-        primary: Currency(name: "USD", fullName: "United States Dollar".localized(), continent: .NorthAmerica),
-        secondary: Currency(name: "GBP", fullName: "British Pound Sterling".localized(), continent: .Europe)
-    )
+    @State private var exchange = Exchange(base: .GBP, destination: .USD)
     @State private var selection: String = "primary"
-
-    @FetchRequest(entity: ManagedRate.entity(), sortDescriptors: []) var managedRates: FetchedResults<ManagedRate>
-    @FetchRequest(entity: ManagedCurrencyRate.entity(), sortDescriptors: []) var managedCurrencyRates: FetchedResults<ManagedCurrencyRate>
 
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
                 HStack {
                 // Exchange
-                    ExchangeDisplay(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
+                    ExchangeView(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
                 }
 
-                // Keypad
                 Keypad(exchange: self.$exchange)
                     .background(Color.backgroundAccent)
                     .cornerRadius(Constants.large)
                     .padding(.leading)
                     .padding(.trailing)
-                     .padding(.bottom)
-//                    .frame(
-//                        width: geometry.size.width,
-//                        height: geometry.size.height / Constants.keypadHeightRatio
-//                    )
+                    .padding(.bottom)
             }
             .onAppear {
    
                 
-                let url = URL(string: "https://api.apilayer.com/exchangerates_data/latest?symbols=\(exchange.primary.name)&base=\(exchange.secondary.name)")!
+                let url = URL(string: "https://api.apilayer.com/exchangerates_data/latest?symbols=\(exchange.base.name)&base=\(exchange.destination.name)")!
                 
                 var request = URLRequest(url: url,timeoutInterval: Double.infinity)
                 request.httpMethod = "GET"
@@ -87,15 +76,6 @@ struct ContentView: View {
                             if let rates = parsed["rates"] as? [String: Any] {
                                 print(rates["USD"])
                             }
-                            
-                            
-                        
-                            
-                            
-//                            exchange.primaryRate = Rate(base: base, date: date, rates: [:])
-                            
-                        
-                            
                         }
                         
                     } catch {
@@ -113,75 +93,18 @@ struct ContentView: View {
     }
 }
 
-extension ContentView {
-    private func decodeData<T>(_ decodeObject: T.Type, _ data: Data) -> T? where T: Codable {
-        let decoder = JSONDecoder()
-        do {
-            return try decoder.decode(decodeObject.self, from: data)
-        } catch let jsonErr {
-            print("Error decoding JSON.", jsonErr)
-            return nil
-        }
-    }
-    
-    private func updateExchanges() {
-        updatePrimaryExchangeRate()
-        updateSecondaryExchangeRate()
-    }
 
-    private func updatePrimaryExchangeRate() {
-//        guard let pmr = (self.managedRates.first { r in r.base == exchange.primary.name}) else {
-//            return
-//        }
-//        let pmrRates = self.managedCurrencyRates.filter { cr in cr.rateId == pmr.id }
-        
-//        exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
-    }
-
-    private func updateSecondaryExchangeRate() {
-        guard let smr = (self.managedRates.first { r in r.base == exchange.secondary.name}) else {
-            return
-        }
-        let smrRates = self.managedCurrencyRates.filter { cr in cr.rateId == smr.id }
-        exchange.secondaryRate = Rate.managedRateAsRate(rate: smr, currencyRates: smrRates)
-    }
-    
-    private func clearExistingRates() {
-        managedRates.forEach { rate in
-            managedObjectContext.delete(rate)
-        }
-
-        do {
-            try managedObjectContext.save()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-
-    private func storeRatesLocally() {
-        model.fetchedRates.forEach { rate in
-            let managedRate = ManagedRate(context: managedObjectContext)
-            managedRate.id = rate.id
-            managedRate.base = rate.base
-
-            rate.rates.forEach { key, value in
-                let managedCurrencyRate = ManagedCurrencyRate(context: managedObjectContext)
-                managedCurrencyRate.ofRate = managedRate
-                managedCurrencyRate.name = key
-                managedCurrencyRate.value = NSDecimalNumber(decimal: value)
-                managedCurrencyRate.rateId = rate.id
-            }
-
-            do {
-                try self.managedObjectContext.save()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
-}
 
 struct Conversion {
+        
+}
+
+struct Fluctuation: Exchangeable {
+    var rates: [String : Any]
+    var base: Currency
+    var success: Bool
+
+    
     
 }
 
@@ -189,4 +112,8 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+}
+
+enum Symbol {
+    
 }

@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct ExchangeDisplay: View {
+struct ExchangeView: View {
     
     @Binding var exchange: Exchange
     @Binding var selection: String

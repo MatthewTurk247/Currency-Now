@@ -15,48 +15,26 @@ struct Exchange {
     private static let secondaryEmpty: String = "0"
 
     // MARK: Properties
-    var primary: Currency
-    var secondary: Currency
+    var base: Currency
+    var destination: Currency
 
     var primaryRate: Rate? = nil
     var secondaryRate: Rate? = nil
     
-    var currentValue: Decimal = 0.0 {
-        didSet {
-            if primaryValueDisplay == "0" {
-                primaryValueDisplay = ""
-            }
-
-            switch self.currentValue {
-            case -1:
-                if !primaryValueDisplay.contains(".") {
-                    if primaryValueDisplay.count == 0 {
-                        primaryValueDisplay = "0."
-                    } else {
-                        primaryValueDisplay += "."
-                    }
-                }
-            case -2:
-                if primaryValueDisplay.count <= 1 {
-                    primaryValueDisplay = Exchange.primaryEmpty
-                } else {
-                    primaryValueDisplay = String(primaryValueDisplay.dropLast())
-                }
-            default:
-                primaryValueDisplay += "\(self.currentValue)"
-            }
-            
-            let primaryValue = Decimal(string: primaryValueDisplay)
-
-            let finalValue = ((primaryValue ?? 0) * conversionRate())
-            let finalValueDouble = Double(exactly: finalValue as NSDecimalNumber) ?? 0.0
-
-            secondaryValueDisplay = String(format: "%.2f", finalValueDouble)
-        }
+    // init<T: Exchangeable>(base: T, destination: T)
+    
+    init(base: Currency, destination: Currency) {
+        self.base = base
+        self.destination = destination
     }
     
-    var primaryValueDisplay: String = Exchange.primaryEmpty
-    var secondaryValueDisplay: String = Exchange.secondaryEmpty
+    static func date(_ date: Date) {
+        
+    }
+    
+    static func timeSeries(base: Currency, symbols: [Currency] = []) {
+        
+    }
     
 }
 
@@ -71,8 +49,7 @@ extension Exchange {
     }
 
     mutating func clear() {
-        primaryValueDisplay = Exchange.primaryEmpty
-        secondaryValueDisplay = Exchange.secondaryEmpty
+        
     }
 
 }
