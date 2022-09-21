@@ -26,40 +26,40 @@ struct CurrencySwap: View {
         HStack(spacing: Constants.small) {
             
             // Swap
-            Button(action: {
-                withAnimation(.easeInOut(duration: 0.2), {
-                    if !self.swapped {
-                        self.primaryOffsetX = 144
-                        self.swapped = true
-                    } else {
-                        self.primaryOffsetX = 0
-                        self.swapped = false
-                    }
-                })
-                // Update exchange rates here
-                (self.exchange.primary, self.exchange.secondary) = (self.exchange.secondary, self.exchange.primary)
-                self.updateExchanges()
-                self.exchange.clear() // until we figure out a way to update the values real-time, we'll have to make this move
-            }) {
-                Image(systemName: "arrow.2.circlepath")
-                    .font(.system(size: Constants.swapIconSize, weight: .black))
-                    .foregroundColor(Color.buttonSecondary)
-            }
-            .frame(width: Constants.buttonHeight, height: Constants.buttonHeight)
-            .background(Color.button)
-            .cornerRadius(Constants.large)
-            .overlay(
-                RoundedRectangle(cornerRadius: Constants.large)
-                    .stroke(Color.buttonSecondary, lineWidth: Constants.buttonBorderWidth)
-            )
-            .zIndex(1.0)
-            //Image(systemName: "chevron.down").foregroundColor(.clear) This would be to offset the button, but it looks worse that way
+//            Button(action: {
+//                withAnimation(.easeInOut(duration: 0.2), {
+//                    if !self.swapped {
+//                        self.primaryOffsetX = 144
+//                        self.swapped = true
+//                    } else {
+//                        self.primaryOffsetX = 0
+//                        self.swapped = false
+//                    }
+//                })
+//                // Update exchange rates here
+//                (self.exchange.primary, self.exchange.secondary) = (self.exchange.secondary, self.exchange.primary)
+//                self.updateExchanges()
+//                self.exchange.clear() // until we figure out a way to update the values real-time, we'll have to make this move
+//            }) {
+//                Image(systemName: "arrow.2.circlepath")
+//                    .font(.system(size: Constants.swapIconSize, weight: .black))
+//                    .foregroundColor(Color.buttonSecondary)
+//            }
+//            .frame(width: Constants.buttonHeight, height: Constants.buttonHeight)
+//            .background(Color.button)
+//            .cornerRadius(Constants.large)
+//            .overlay(
+//                RoundedRectangle(cornerRadius: Constants.large)
+//                    .stroke(Color.buttonSecondary, lineWidth: Constants.buttonBorderWidth)
+//            )
+//            .zIndex(1.0)
+//            //Image(systemName: "chevron.down").foregroundColor(.clear) This would be to offset the button, but it looks worse that way
             
         }
         
     }
 }
-
+/*
 struct CurrencySwap_Previews: PreviewProvider {
     static var previews: some View {
         CurrencySwap(
@@ -71,3 +71,4 @@ struct CurrencySwap_Previews: PreviewProvider {
                     secondary: Currency(name: "USD", fullName: "", continent: .NorthAmerica))), updateExchanges: {})
     }
 }
+*/

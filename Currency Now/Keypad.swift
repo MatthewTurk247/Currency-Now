@@ -62,7 +62,7 @@ struct Keypad: View {
 extension Keypad {
 
     private func handleKeyPressed(_ keyIndex: Int) {
-        exchange.currentValue = keyIndexAsInt(keyIndex)
+        // exchange.currentValue = keyIndexAsInt(keyIndex)
     }
 
     private func clearExchange() {
@@ -107,7 +107,7 @@ extension Keypad {
 
 }
 
-struct Keypad_Previews: PreviewProvider {
+/*struct Keypad_Previews: PreviewProvider {
     static var previews: some View {
         Keypad(
             exchange: .constant(Exchange(
@@ -116,4 +116,4 @@ struct Keypad_Previews: PreviewProvider {
             ))
         )
     }
-}
+}*/

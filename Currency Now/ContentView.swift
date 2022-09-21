@@ -41,7 +41,7 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 HStack {
                 // Exchange
-                    ExchangeView(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
+                    // ExchangeView(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
                 }
 
                 Keypad(exchange: self.$exchange)
@@ -52,39 +52,7 @@ struct ContentView: View {
                     .padding(.bottom)
             }
             .onAppear {
-   
-                
-                let url = URL(string: "https://api.apilayer.com/exchangerates_data/latest?symbols=\(exchange.base.name)&base=\(exchange.destination.name)")!
-                
-                var request = URLRequest(url: url,timeoutInterval: Double.infinity)
-                request.httpMethod = "GET"
-                guard let apiKey = ExchangeRatesService.apiKey else { return }
-                request.addValue(apiKey, forHTTPHeaderField: "apikey")
-
-                let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                  guard let data = data else {
-                    print(String(describing: error))
-                    return
-                  }
-                    do {
-                        let parsed = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                        print(parsed)
-                        if let parsed = parsed as? [String: Any] {
-                            print(parsed["base"] as? String)
-                            print(parsed["timestamp"] as? Int)
-                            print(parsed["date"] as? String)
-                            if let rates = parsed["rates"] as? [String: Any] {
-                                print(rates["USD"])
-                            }
-                        }
-                        
-                    } catch {
-                        print("error")
-                    }
-//                exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
-                }
-
-                task.resume()
+                print(Exchange(base: .GBP, destination: .USD).latest())
             }
             .background(Color.background)
             .edgesIgnoringSafeArea(.bottom)

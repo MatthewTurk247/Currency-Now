@@ -412,6 +412,10 @@ enum Currency {
             return "Zimbabwean Dollar"
         }
     }
+    
+    var symbol: String {
+        return String(describing: self)
+    }
 }
 
 

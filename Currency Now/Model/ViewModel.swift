@@ -32,26 +32,11 @@ extension ViewModel {
     }
     
     private func fetchCurrencyRates() {
-        Currency.currencies.forEach { currency in
-            getLatestRateForBase(base: currency.name)
-        }
+        
     }
     
     private func getLatestRateForBase(base: String) {
-        cancellationToken.insert(ExchangeRatesService.request(.latest, parameters: ["base": base])
-            .mapError({ (error) -> Error in
-                self.error = error
-                return error
-            })
-            .sink(receiveCompletion: { _ in },
-                  receiveValue: { rate in
-                    self.fetchedRates.insert(rate)
-                    print("Returned rate: \(rate)")
-                    
-                    if self.fetchedRates.count >= Currency.currencies.count {
-                        self.ratesFetched = true
-                    }
-            }))
+        
     }
     
 }

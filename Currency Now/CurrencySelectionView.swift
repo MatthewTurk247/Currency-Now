@@ -15,14 +15,14 @@ struct CurrencySelectionView: View {
     @Binding var exchange: Exchange
     @Binding var selection: String
     
-    private let currencies = Currency.currencySections
+    // private let currencies = Currency.currencySections
     
     var body: some View {
         
         NavigationView {
             VStack(spacing: 0) {
                 List {
-                    ForEach(currencies) { section in
+                    /*ForEach(currencies) { section in
                         Section(header:
                             Text(section.title)
                                 .padding(.top, section.title == "Africa" ? Constants.medium : 0)
@@ -41,7 +41,7 @@ struct CurrencySelectionView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                    }
+                    }*/
                     
                 }
                 .listStyle(GroupedListStyle())
@@ -52,7 +52,7 @@ struct CurrencySelectionView: View {
         }
     }
 }
-
+/*
 struct CurrencySelectionView_Previews: PreviewProvider {
     static var previews: some View {
         CurrencySelectionView(
@@ -64,3 +64,4 @@ struct CurrencySelectionView_Previews: PreviewProvider {
             selection: .constant("primary"))
     }
 }
+*/

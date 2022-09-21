@@ -27,7 +27,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: "\(self.exchange.primaryValueDisplay)", name: self.exchange.primary.fullName, code: self.exchange.primary.name, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+//                        ExchangeDisplayDetail(value: "\(self.exchange.primaryValueDisplay)", name: self.exchange.primary.fullName, code: self.exchange.primary.name, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         
                     }
                     Spacer()
@@ -59,7 +59,7 @@ struct ExchangeView: View {
                 HStack {
                     VStack {
                         
-                        ExchangeDisplayDetail(value: "\(self.exchange.secondaryValueDisplay)", name: self.exchange.secondary.fullName, code: self.exchange.secondary.name, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+//                        ExchangeDisplayDetail(value: "\(self.exchange.secondaryValueDisplay)", name: self.exchange.secondary.fullName, code: self.exchange.secondary.name, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         Spacer()
                         
                     }
@@ -74,7 +74,7 @@ struct ExchangeView: View {
     
 }
 
-struct ExchangeDisplay_Previews: PreviewProvider {
+/*struct ExchangeDisplay_Previews: PreviewProvider {
     static var previews: some View {
         ExchangeDisplay(
             exchange: .constant(Exchange(
@@ -85,3 +85,4 @@ struct ExchangeDisplay_Previews: PreviewProvider {
             .background(Color.background)
     }
 }
+*/
