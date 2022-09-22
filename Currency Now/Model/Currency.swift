@@ -14,7 +14,7 @@ protocol Exchangeable {
     var success: Bool { get }
 }
 
-enum Currency {
+enum Currency: CaseIterable {
     case AED, AFN, ALL, AMD
     case ANG, AOA, ARS, AUD
     case AWG, AZN, BAM, BBD

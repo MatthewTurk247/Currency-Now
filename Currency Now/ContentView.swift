@@ -52,7 +52,14 @@ struct ContentView: View {
                     .padding(.bottom)
             }
             .onAppear {
-                print(Exchange(base: .GBP, destination: .USD).latest())
+                //print(Exchange(base: .GBP, destination: .USD).latest())
+            }
+            .task {
+                do {
+                    try await print("continuation", Exchange(base: .GBP, destination: .USD).latest())
+                } catch let error {
+                    print("error: \(error)")
+                }
             }
             .background(Color.background)
             .edgesIgnoringSafeArea(.bottom)
