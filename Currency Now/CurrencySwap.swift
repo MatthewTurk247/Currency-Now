@@ -14,12 +14,7 @@ struct CurrencySwap: View {
     @Binding var showCurrencySelection: Bool
     @Binding var selection: String
     @Binding var exchange: Exchange
-    
-    @State var primaryOffsetX: CGFloat = 0
-    
     @State var swapped: Bool = false
-    
-    var updateExchanges: () -> Void
     
     var body: some View {
         

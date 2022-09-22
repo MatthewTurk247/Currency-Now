@@ -40,8 +40,7 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 0) {
                 HStack {
-                // Exchange
-                    // ExchangeView(exchange: self.$exchange, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection, updateExchanges: self.updateExchanges)
+                     ExchangeView(exchange: self.$exchange)
                 }
 
                 Keypad(exchange: self.$exchange)

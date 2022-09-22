@@ -12,9 +12,8 @@ import SwiftUI
 struct ExchangeView: View {
     
     @Binding var exchange: Exchange
-    @Binding var selection: String
-    @Binding var showCurrencySelection: Bool
-    var updateExchanges: () -> Void
+    @State private var selection = ""
+    @State private var showCurrencySelection: Bool = false
     
     var body: some View {
         
@@ -35,24 +34,11 @@ struct ExchangeView: View {
                 .background(Color.backgroundAccent)
                 HStack {
                     Spacer()
-                        // Currency swap
-                        CurrencySwap(
-                            showCurrencySelection: self.$showCurrencySelection,
-                            selection: self.$selection,
-                            exchange: self.$exchange,
-                            updateExchanges: self.updateExchanges)
-                            .sheet(isPresented: self.$showCurrencySelection) {
-                                CurrencySelectionView(
-                                    showCurrencySelection: self.$showCurrencySelection,
-                                    exchange: self.$exchange,
-                                    selection: self.$selection)
-                                    .onDisappear {
-                                        DispatchQueue.main.async {
-                                            self.updateExchanges()
-                                            self.exchange.clear()
-                                        }
-                                }
-                        }.padding(.horizontal)
+                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: $exchange)
+                        .sheet(isPresented: self.$showCurrencySelection) {
+                            CurrencySelectionView(
+                                showCurrencySelection: self.$showCurrencySelection,
+                                exchange: self.$exchange, selection: $selection)
                 }.frame(height: 0)
 
                 // Secondary
@@ -70,6 +56,8 @@ struct ExchangeView: View {
             
         }
         
+    }
+    
     }
     
 }
