@@ -64,11 +64,15 @@ extension Keypad {
 
     private func handleKeyPressed(_ keyIndex: Int) {
         let keyAsString = keyIndexAsString(keyIndex)
-        if inputString == "0" {
+        if keyAsString == "BACKSPACE" {
+            inputString = "0"
+        } else if inputString == "0" {
             inputString = keyAsString
         } else {
             inputString += keyAsString
         }
+        
+        // When user taps "." if input without trailing zeros != input, do not add another "." to the string
         
         print(inputString)
         input = Double(inputString) ?? input
@@ -141,7 +145,7 @@ extension Keypad {
         case 10:
             return "0"
         case 11:
-            return "-1"
+            return "BACKSPACE"
         default:
             return "0"
         }

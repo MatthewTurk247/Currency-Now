@@ -28,7 +28,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: String(describing: input), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
+                        ExchangeDisplayDetail(value: input > 0 ? String(describing: input) : input.withoutTrailingZeros(), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
                         
                         
                     }
@@ -37,18 +37,18 @@ struct ExchangeView: View {
                 .background(Color.backgroundAccent)
                 HStack {
                     Spacer()
-//                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: $exchange)
-//                        .sheet(isPresented: self.$showCurrencySelection) {
-//                            CurrencySelectionView(
-//                                showCurrencySelection: self.$showCurrencySelection,
-//                                exchange: self.$exchange, selection: $selection)
-//                }.frame(height: 0)
+                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: exchange)
+                        .sheet(isPresented: self.$showCurrencySelection) {
+                            CurrencySelectionView(
+                                showCurrencySelection: self.$showCurrencySelection,
+                                exchange: exchange, selection: $selection)
+                }.frame(height: 0)
 
                 // Secondary
                 HStack {
                     VStack {
                         // String(describing: baseValue*rate)
-                        ExchangeDisplayDetail(value: "\(input*exchange.rate)", name: exchange.destination.name, code: exchange.destination.symbol, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                        ExchangeDisplayDetail(value: input > 0 ? "\(input*exchange.rate)" : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         Spacer()
                         
                     }
@@ -63,6 +63,16 @@ struct ExchangeView: View {
     
     }
     
+}
+
+extension Double {
+    func withoutTrailingZeros() -> String {
+        let formatter = NumberFormatter()
+        let number = NSNumber(value: self)
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 16
+        return String(formatter.string(from: number) ?? "")
+    }
 }
 
 /*struct ExchangeDisplay_Previews: PreviewProvider {

@@ -13,7 +13,7 @@ struct CurrencySwap: View {
     
     @Binding var showCurrencySelection: Bool
     @Binding var selection: String
-    @Binding var exchange: Exchange
+    @ObservedObject var exchange: Exchange
     @State var swapped: Bool = false
     
     var body: some View {

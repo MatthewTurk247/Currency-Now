@@ -12,7 +12,7 @@ import SwiftUI
 struct CurrencySelectionView: View {
     
     @Binding var showCurrencySelection: Bool
-    @Binding var exchange: Exchange
+    @ObservedObject var exchange: Exchange
     @Binding var selection: String
     
     // private let currencies = Currency.currencySections
@@ -43,6 +43,9 @@ struct CurrencySelectionView: View {
                         }
                     }*/
                     
+                }
+                .onAppear {
+                    print(Dictionary(grouping: Currency.allCases, by: { $0.home }))
                 }
                 .listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
