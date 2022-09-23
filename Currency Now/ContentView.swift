@@ -29,7 +29,7 @@ extension Color {
 struct ContentView: View {
     @State private var showCurrencySelection: Bool = false
     @State private var showErrorAlert: Bool = false
-    @State private var exchange = Exchange(base: .GBP, destination: .USD)
+    @StateObject private var exchange = Exchange(base: .GBP, destination: .USD)
     @State private var selection: String = "primary"
     @State private var baseValue: Double = 0
     @State private var goingRate: Double = 1
@@ -37,13 +37,13 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                ExchangeView(exchange: $exchange, input: $baseValue, rate: $goingRate)
-                Keypad(exchange: $exchange)
-                    .background(Color.backgroundAccent)
-                    .cornerRadius(Constants.large)
-                    .padding(.leading)
-                    .padding(.trailing)
-                    .padding(.bottom)
+                ExchangeView(exchange: exchange, input: $baseValue, rate: $goingRate)
+//                Keypad(exchange: $exchange)
+//                    .background(Color.backgroundAccent)
+//                    .cornerRadius(Constants.large)
+//                    .padding(.leading)
+//                    .padding(.trailing)
+//                    .padding(.bottom)
             }
             .task {
                 do {

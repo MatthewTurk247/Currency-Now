@@ -17,9 +17,9 @@ class Exchange: ObservableObject {
     private static let endpoint = URL(string: "https://api.apilayer.com/exchangerates_data")!
     
     // MARK: Properties
-    var base: Currency
-    var destination: Currency
-    var rate: Double = 1
+    @Published var base: Currency
+    @Published var destination: Currency
+    @Published var rate: Double = 1
     
     // init<T: Exchangeable>(base: T, destination: T)
     

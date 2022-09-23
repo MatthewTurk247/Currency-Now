@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ExchangeView: View {
     
-    @Binding var exchange: Exchange
+    @ObservedObject var exchange: Exchange
     @Binding var input: Double
     @Binding var rate: Double
     @State private var selection = ""
@@ -28,7 +28,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: String(describing: rate), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
+                        ExchangeDisplayDetail(value: String(describing: $exchange.rate.wrappedValue), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
 //                        ExchangeDisplayDetail(value: "\(self.exchange.primaryValueDisplay)", name: self.exchange.primary.fullName, code: self.exchange.primary.name, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         
                     }
@@ -37,12 +37,12 @@ struct ExchangeView: View {
                 .background(Color.backgroundAccent)
                 HStack {
                     Spacer()
-                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: $exchange)
-                        .sheet(isPresented: self.$showCurrencySelection) {
-                            CurrencySelectionView(
-                                showCurrencySelection: self.$showCurrencySelection,
-                                exchange: self.$exchange, selection: $selection)
-                }.frame(height: 0)
+//                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: $exchange)
+//                        .sheet(isPresented: self.$showCurrencySelection) {
+//                            CurrencySelectionView(
+//                                showCurrencySelection: self.$showCurrencySelection,
+//                                exchange: self.$exchange, selection: $selection)
+//                }.frame(height: 0)
 
                 // Secondary
                 HStack {
