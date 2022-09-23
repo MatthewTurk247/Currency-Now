@@ -12,7 +12,7 @@ import SwiftUI
 struct ExchangeView: View {
     
     @Binding var exchange: Exchange
-    @Binding var baseValue: Double
+    @Binding var input: Double
     @Binding var rate: Double
     @State private var selection = ""
     @State private var showCurrencySelection: Bool = false
@@ -28,7 +28,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: String(describing: baseValue), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
+                        ExchangeDisplayDetail(value: String(describing: rate), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
 //                        ExchangeDisplayDetail(value: "\(self.exchange.primaryValueDisplay)", name: self.exchange.primary.fullName, code: self.exchange.primary.name, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         
                     }

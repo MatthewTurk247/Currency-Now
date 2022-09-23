@@ -19,6 +19,7 @@ class Exchange: ObservableObject {
     // MARK: Properties
     var base: Currency
     var destination: Currency
+    var rate: Double = 1
     
     // init<T: Exchangeable>(base: T, destination: T)
     

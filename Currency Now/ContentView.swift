@@ -37,8 +37,8 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                ExchangeView(exchange: $exchange, baseValue: $baseValue, rate: $goingRate)
-                Keypad(exchange: self.$exchange)
+                ExchangeView(exchange: $exchange, input: $baseValue, rate: $goingRate)
+                Keypad(exchange: $exchange)
                     .background(Color.backgroundAccent)
                     .cornerRadius(Constants.large)
                     .padding(.leading)
@@ -50,6 +50,8 @@ struct ContentView: View {
                     let conversion = try await exchange.convert(12.3)
                     
                     if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
+                        print(results)
+                        exchange.rate = results
                         goingRate = results
                     }
                 } catch let error {
