@@ -13,7 +13,8 @@ struct Keypad: View {
     
     private let keys: [String] = ["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0", "-"]
     
-    @Binding var exchange: Exchange
+    @Binding var input: Double
+    @State private var inputString: String = "0"
     
     var body: some View {
         
@@ -62,11 +63,19 @@ struct Keypad: View {
 extension Keypad {
 
     private func handleKeyPressed(_ keyIndex: Int) {
-        // exchange.currentValue = keyIndexAsInt(keyIndex)
+        let keyAsString = keyIndexAsString(keyIndex)
+        if inputString == "0" {
+            inputString = keyAsString
+        } else {
+            inputString += keyAsString
+        }
+        
+        print(inputString)
+        input = Double(inputString) ?? input
     }
 
     private func clearExchange() {
-        exchange.clear()
+        inputString = ""
         warningHaptic()
     }
 
@@ -102,6 +111,39 @@ extension Keypad {
             return -2
         default:
             return 0
+        }
+    }
+    
+    // could just use a map
+    
+    private func keyIndexAsString(_ index: Int) -> String {
+        switch index {
+        case 0:
+            return "7"
+        case 1:
+            return "8"
+        case 2:
+            return "9"
+        case 3:
+            return "4"
+        case 4:
+            return "5"
+        case 5:
+            return "6"
+        case 6:
+            return "1"
+        case 7:
+            return "2"
+        case 8:
+            return "3"
+        case 9:
+            return "."
+        case 10:
+            return "0"
+        case 11:
+            return "-1"
+        default:
+            return "0"
         }
     }
 

@@ -38,12 +38,12 @@ struct ContentView: View {
         NavigationView {
             VStack(spacing: 0) {
                 ExchangeView(exchange: exchange, input: $baseValue, rate: $goingRate)
-//                Keypad(exchange: $exchange)
-//                    .background(Color.backgroundAccent)
-//                    .cornerRadius(Constants.large)
-//                    .padding(.leading)
-//                    .padding(.trailing)
-//                    .padding(.bottom)
+                Keypad(input: $baseValue)
+                    .background(Color.backgroundAccent)
+                    .cornerRadius(Constants.large)
+                    .padding(.leading)
+                    .padding(.trailing)
+                    .padding(.bottom)
             }
             .task {
                 do {

@@ -28,8 +28,8 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: String(describing: $exchange.rate.wrappedValue), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
-//                        ExchangeDisplayDetail(value: "\(self.exchange.primaryValueDisplay)", name: self.exchange.primary.fullName, code: self.exchange.primary.name, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                        ExchangeDisplayDetail(value: String(describing: input), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
+                        
                         
                     }
                     Spacer()
@@ -48,7 +48,7 @@ struct ExchangeView: View {
                 HStack {
                     VStack {
                         // String(describing: baseValue*rate)
-//                        ExchangeDisplayDetail(value: "\(self.exchange.secondaryValueDisplay)", name: self.exchange.secondary.fullName, code: self.exchange.secondary.name, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                        ExchangeDisplayDetail(value: "\(input*exchange.rate)", name: exchange.destination.name, code: exchange.destination.symbol, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         Spacer()
                         
                     }
