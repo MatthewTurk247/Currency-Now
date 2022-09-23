@@ -27,24 +27,17 @@ extension Color {
 }
 
 struct ContentView: View {
- 
-    @Environment(\.managedObjectContext) var managedObjectContext
-    @ObservedObject var model: ViewModel = ViewModel()
-
     @State private var showCurrencySelection: Bool = false
     @State private var showErrorAlert: Bool = false
     @State private var exchange = Exchange(base: .GBP, destination: .USD)
     @State private var selection: String = "primary"
-    @State private var base: Currency = .GBP
-    @State private var destination: Currency = .USD
+    @State private var baseValue: Double = 0
+    @State private var goingRate: Double = 1
 
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                HStack {
-                     ExchangeView(exchange: self.$exchange)
-                }
-
+                ExchangeView(exchange: $exchange, baseValue: $baseValue, rate: $goingRate)
                 Keypad(exchange: self.$exchange)
                     .background(Color.backgroundAccent)
                     .cornerRadius(Constants.large)
@@ -52,14 +45,15 @@ struct ContentView: View {
                     .padding(.trailing)
                     .padding(.bottom)
             }
-            .onAppear {
-                //print(Exchange(base: .GBP, destination: .USD).latest())
-            }
             .task {
                 do {
-                    try await print("continuation", exchange.convert(12.3))
+                    let conversion = try await exchange.convert(12.3)
+                    
+                    if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
+                        goingRate = results
+                    }
                 } catch let error {
-                    print("error: \(error)")
+                    print(error.localizedDescription)
                 }
             }
             .background(Color.background)
@@ -69,27 +63,34 @@ struct ContentView: View {
     }
 }
 
-
-
-struct Conversion {
-        
-}
-
-struct Fluctuation: Exchangeable {
-    var rates: [String : Any]
-    var base: Currency
-    var success: Bool
-
+struct Conversion: Codable {
+    let date, historical: String
+    let info: Info
+    let query: Query
+    let result: Double
+    let success: Bool
     
+    enum CodingKeys: String, CodingKey {
+        case date, historical
+        case info
+        case query
+        case result
+        case success
+    }
     
+    struct Info: Codable {
+        let rate: Double
+        let timestamp: Int
+    }
+
+    struct Query: Codable {
+        let amount: Int
+        let from, to: String
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
-}
-
-enum Symbol {
-    
 }

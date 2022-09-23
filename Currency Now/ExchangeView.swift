@@ -12,6 +12,8 @@ import SwiftUI
 struct ExchangeView: View {
     
     @Binding var exchange: Exchange
+    @Binding var baseValue: Double
+    @Binding var rate: Double
     @State private var selection = ""
     @State private var showCurrencySelection: Bool = false
     
@@ -26,6 +28,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
+                        ExchangeDisplayDetail(value: String(describing: baseValue), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
 //                        ExchangeDisplayDetail(value: "\(self.exchange.primaryValueDisplay)", name: self.exchange.primary.fullName, code: self.exchange.primary.name, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         
                     }
@@ -44,7 +47,7 @@ struct ExchangeView: View {
                 // Secondary
                 HStack {
                     VStack {
-                        
+                        // String(describing: baseValue*rate)
 //                        ExchangeDisplayDetail(value: "\(self.exchange.secondaryValueDisplay)", name: self.exchange.secondary.fullName, code: self.exchange.secondary.name, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         Spacer()
                         

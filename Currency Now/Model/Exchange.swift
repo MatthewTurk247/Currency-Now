@@ -27,7 +27,7 @@ class Exchange: ObservableObject {
         self.destination = destination
     }
     
-    static func convert(_ amount: Double, from base: Currency, to destination: Currency, on: Date? = nil) async throws -> Double {
+    static func convert(_ amount: Double, from base: Currency, to destination: Currency, on: Date? = nil) async throws -> [String: Any] {
         var components = URLComponents(url: Exchange.endpoint.appendingPathComponent("convert"), resolvingAgainstBaseURL: false)!
         components.queryItems = [
             URLQueryItem(name: "amount", value: String(amount)),
@@ -35,11 +35,11 @@ class Exchange: ObservableObject {
             URLQueryItem(name: "to", value: destination.symbol)
         ]
         
-        guard let url = components.url else { return 0 }
+        guard let url = components.url else { return [:] }
         
         var request = URLRequest(url: url,timeoutInterval: Double.infinity)
         request.httpMethod = "GET"
-        guard let apiKey = ExchangeRatesService.apiKey else { return 0}
+        guard let apiKey = ExchangeRatesService.apiKey else { return [:] }
         request.addValue(apiKey, forHTTPHeaderField: "apikey")
         
         return try await withCheckedThrowingContinuation { continuation in
@@ -52,10 +52,8 @@ class Exchange: ObservableObject {
                         // print(parsed["base"] as? String)
                         // print(parsed["timestamp"] as? Int)
                         // print(parsed["date"] as? String)
-                        print("parsed,", parsed)
-                        if let results = parsed["result"] as? Double {
-                            continuation.resume(returning: results)
-                        }
+                        continuation.resume(returning: parsed)
+                        
                     }
                     
                 } catch let error {
@@ -69,9 +67,10 @@ class Exchange: ObservableObject {
         }
     }
     
-    func convert(_ amount: Double) async throws -> Double {
+    func convert(_ amount: Double) async throws -> [String: Any] {
         return try await Exchange.convert(amount, from: self.base, to: self.destination)
     }
+
     
     func latest() async throws -> [String: Any] {
         var components = URLComponents(url: Exchange.endpoint.appendingPathComponent("latest"), resolvingAgainstBaseURL: false)!
