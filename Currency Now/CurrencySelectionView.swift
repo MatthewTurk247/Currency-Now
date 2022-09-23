@@ -40,30 +40,7 @@ struct CurrencySelectionView: View {
                         } header: {
                             Text(verbatim: String(describing: key))
                         }
-
-                        
                     }
-                    /*ForEach(currencies) { section in
-                        Section(header:
-                            Text(section.title)
-                                .padding(.top, section.title == "Africa" ? Constants.medium : 0)
-                        ) {
-                            ForEach(section.currencies) { currency in
-                                Button(action: {
-                                    if self.selection == "primary" {
-                                        self.exchange.primary = currency
-                                    } else {
-                                        self.exchange.secondary = currency
-                                    }
-                                    self.showCurrencySelection.toggle()
-                                }) {
-                                    CurrencySelectionRow(currency: currency)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
-                        }
-                    }*/
-                    
                 }
                 .onAppear {
                     print(groupedCurrencies)
@@ -76,16 +53,3 @@ struct CurrencySelectionView: View {
         }
     }
 }
-/*
-struct CurrencySelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        CurrencySelectionView(
-            showCurrencySelection: .constant(true),
-            exchange: .constant(
-                Exchange(
-                    primary: Currency(name: "", fullName: "", continent: .Australia),
-                    secondary: Currency(name: "", fullName: "", continent: .Australia))),
-            selection: .constant("primary"))
-    }
-}
-*/
