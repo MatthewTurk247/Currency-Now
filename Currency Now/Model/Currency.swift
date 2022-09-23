@@ -15,48 +15,27 @@ protocol Exchangeable {
 }
 
 enum Currency: CaseIterable {
-    case AED, AFN, ALL, AMD
-    case ANG, AOA, ARS, AUD
-    case AWG, AZN, BAM, BBD
-    case BDT, BGN, BHD, BIF
-    case BMD, BND, BOB, BRL
-    case BSD, BTC, BTN, BWP
-    case BYN, BYR, BZD, CAD
-    case CDF, CHF, CLF, CLP
-    case CNY, COP, CRC, CUC
-    case CUP, CVE, CZK, DJF
-    case DKK, DOP, DZD, EGP
-    case ERN, ETB, EUR, FJD
-    case FKP, GBP, GEL, GGP
-    case GHS, GIP, GMD, GNF
-    case GTQ, GYD, HKD, HNL
-    case HRK, HTG, HUF, IDR
-    case ILS, IMP, INR, IQD
-    case IRR, ISK, JEP, JMD
-    case JOD, JPY, KES, KGS
-    case KHR, KMF, KPW, KRW
-    case KWD, KYD, KZT, LAK
-    case LBP, LKR, LRD, LSL
-    case LTL, LVL, LYD, MAD
-    case MDL, MGA, MKD, MMK
-    case MNT, MOP, MRO, MUR
-    case MVR, MWK, MXN, MYR
-    case MZN, NAD, NGN, NIO
-    case NOK, NPR, NZD, OMR
-    case PAB, PEN, PGK, PHP
-    case PKR, PLN, PYG, QAR
-    case RON, RSD, RUB, RWF
-    case SAR, SBD, SCR, SDG
-    case SEK, SGD, SHP, SLL
-    case SOS, SRD, STD, SVC
-    case SYP, SZL, THB, TJS
-    case TMT, TND, TOP, TRY
-    case TTD, TWD, TZS, UAH
-    case UGX, USD, UYU, UZS
-    case VEF, VND, VUV, WST
-    case XAF, XAG, XAU, XCD
-    case XDR, XOF, XPF, YER
-    case ZAR, ZMK, ZMW, ZWL
+    case AED, AFN, ALL, AMD, ANG, AOA, ARS, AUD
+    case AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF
+    case BMD, BND, BOB, BRL, BSD, BTC, BTN, BWP
+    case BYN, BYR, BZD, CAD, CDF, CHF, CLF, CLP
+    case CNY, COP, CRC, CUC, CUP, CVE, CZK, DJF
+    case DKK, DOP, DZD, EGP, ERN, ETB, EUR, FJD
+    case FKP, GBP, GEL, GGP, GHS, GIP, GMD, GNF
+    case GTQ, GYD, HKD, HNL, HRK, HTG, HUF, IDR
+    case ILS, IMP, INR, IQD, IRR, ISK, JEP, JMD
+    case JOD, JPY, KES, KGS, KHR, KMF, KPW, KRW
+    case KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL
+    case LTL, LVL, LYD, MAD, MDL, MGA, MKD, MMK
+    case MNT, MOP, MRO, MUR, MVR, MWK, MXN, MYR
+    case MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR
+    case PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR
+    case RON, RSD, RUB, RWF, SAR, SBD, SCR, SDG
+    case SEK, SGD, SHP, SLL, SOS, SRD, STD, SVC
+    case SYP, SZL, THB, TJS, TMT, TND, TOP, TRY
+    case TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS
+    case VEF, VND, VUV, WST, XAF, XAG, XAU, XCD
+    case XDR, XOF, XPF, YER, ZAR, ZMK, ZMW, ZWL
     
     var home: Continent {
         switch self {

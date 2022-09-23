@@ -14,6 +14,7 @@ struct CurrencySelectionView: View {
     @Binding var showCurrencySelection: Bool
     @ObservedObject var exchange: Exchange
     @Binding var selection: String
+    private let groupedCurrencies = Dictionary(grouping: Currency.allCases, by: { $0.home })
     
     // private let currencies = Currency.currencySections
     
@@ -22,6 +23,26 @@ struct CurrencySelectionView: View {
         NavigationView {
             VStack(spacing: 0) {
                 List {
+                    ForEach(Array(groupedCurrencies.keys), id: \.self) { key in
+                        Section {
+                            ForEach(groupedCurrencies[key] ?? [], id: \.self) { currency in
+                                Button {
+                                    print(currency.name)
+                                    if self.selection == "primary" {
+                                        // update base currency
+                                    } else {
+                                        // update destination currency
+                                    }
+                                } label: {
+                                    CurrencySelectionRow(currency: currency)
+                                }
+                            }.buttonStyle(PlainButtonStyle())
+                        } header: {
+                            Text(verbatim: String(describing: key))
+                        }
+
+                        
+                    }
                     /*ForEach(currencies) { section in
                         Section(header:
                             Text(section.title)
@@ -45,7 +66,7 @@ struct CurrencySelectionView: View {
                     
                 }
                 .onAppear {
-                    print(Dictionary(grouping: Currency.allCases, by: { $0.home }))
+                    print(groupedCurrencies)
                 }
                 .listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
