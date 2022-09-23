@@ -14,7 +14,7 @@ class Exchange: ObservableObject {
     private static let primaryEmpty: String = "0"
     private static let secondaryEmpty: String = "0"
     
-    private let endpoint = URL(string: "https://api.apilayer.com/exchangerates_data")!
+    private static let endpoint = URL(string: "https://api.apilayer.com/exchangerates_data")!
     
     // MARK: Properties
     var base: Currency
@@ -27,8 +27,54 @@ class Exchange: ObservableObject {
         self.destination = destination
     }
     
+    static func convert(_ amount: Double, from base: Currency, to destination: Currency, on: Date? = nil) async throws -> Double {
+        var components = URLComponents(url: Exchange.endpoint.appendingPathComponent("convert"), resolvingAgainstBaseURL: false)!
+        components.queryItems = [
+            URLQueryItem(name: "amount", value: String(amount)),
+            URLQueryItem(name: "from", value: base.symbol),
+            URLQueryItem(name: "to", value: destination.symbol)
+        ]
+        
+        guard let url = components.url else { return 0 }
+        
+        var request = URLRequest(url: url,timeoutInterval: Double.infinity)
+        request.httpMethod = "GET"
+        guard let apiKey = ExchangeRatesService.apiKey else { return 0}
+        request.addValue(apiKey, forHTTPHeaderField: "apikey")
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            var currentRates: Double = 0
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = data else { return }
+                do {
+                    let parsed = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                    if let parsed = parsed as? [String: Any] {
+                        // print(parsed["base"] as? String)
+                        // print(parsed["timestamp"] as? Int)
+                        // print(parsed["date"] as? String)
+                        print("parsed,", parsed)
+                        if let results = parsed["result"] as? Double {
+                            continuation.resume(returning: results)
+                        }
+                    }
+                    
+                } catch let error {
+                    continuation.resume(throwing: error)
+                }
+                //                exchange.primaryRate = Rate.managedRateAsRate(rate: pmr, currencyRates: pmrRates)
+            }
+            
+            task.resume()
+            // continuation.resume(returning: currentRates)
+        }
+    }
+    
+    func convert(_ amount: Double) async throws -> Double {
+        return try await Exchange.convert(amount, from: self.base, to: self.destination)
+    }
+    
     func latest() async throws -> [String: Any] {
-        var components = URLComponents(url: self.endpoint.appendingPathComponent("latest"), resolvingAgainstBaseURL: false)!
+        var components = URLComponents(url: Exchange.endpoint.appendingPathComponent("latest"), resolvingAgainstBaseURL: false)!
         components.queryItems = [
             URLQueryItem(name: "symbols", value: Currency.allCases.map { $0.symbol }.joined(separator: ",")),
             URLQueryItem(name: "base", value: self.base.symbol)
@@ -53,7 +99,7 @@ class Exchange: ObservableObject {
                         // print(parsed["date"] as? String)
                         if let rates = parsed["rates"] as? [String: Any] {
                             currentRates = rates
-                            print(currentRates)
+                            print("works ", currentRates)
                         }
                     }
                     

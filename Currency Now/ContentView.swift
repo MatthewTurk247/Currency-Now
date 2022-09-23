@@ -35,6 +35,8 @@ struct ContentView: View {
     @State private var showErrorAlert: Bool = false
     @State private var exchange = Exchange(base: .GBP, destination: .USD)
     @State private var selection: String = "primary"
+    @State private var base: Currency = .GBP
+    @State private var destination: Currency = .USD
 
     var body: some View {
         NavigationView {
@@ -55,7 +57,7 @@ struct ContentView: View {
             }
             .task {
                 do {
-                    try await print("continuation", Exchange(base: .GBP, destination: .USD).latest())
+                    try await print("continuation", exchange.convert(12.3))
                 } catch let error {
                     print("error: \(error)")
                 }
