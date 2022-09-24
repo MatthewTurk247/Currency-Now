@@ -15,6 +15,7 @@ struct CurrencySelectionView: View {
     @ObservedObject var exchange: Exchange
     @Binding var selection: String
     private let groupedCurrencies = Dictionary(grouping: Currency.allCases, by: { $0.home })
+    @Binding var didChange: Bool
     
     // private let currencies = Currency.currencySections
     
@@ -27,12 +28,26 @@ struct CurrencySelectionView: View {
                         Section {
                             ForEach(groupedCurrencies[key] ?? [], id: \.self) { currency in
                                 Button {
-                                    print(currency.name)
+                                    async {print(currency.name)
                                     if self.selection == "primary" {
-                                        // update base currency
+                                        print("update base currency")
+                                        self.exchange.base = currency
                                     } else {
-                                        // update destination currency
+                                        print("update destination currency")
+                                        self.exchange.destination = currency
                                     }
+                                    do {
+                                        exchange.clear()
+                                        let conversion = try await exchange.convert(12.3)
+                                        
+                                        if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
+                                            print(results)
+                                            exchange.rate = results
+                                            didChange = true
+                                        }
+                                    } catch let error {
+                                        print(error.localizedDescription)
+                                    }}
                                 } label: {
                                     CurrencySelectionRow(currency: currency)
                                 }

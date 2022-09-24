@@ -16,6 +16,7 @@ struct ExchangeView: View {
     @Binding var rate: Double
     @State private var selection = ""
     @State private var showCurrencySelection: Bool = false
+    @State private var didChange: Bool = false
     
     var body: some View {
         
@@ -38,17 +39,23 @@ struct ExchangeView: View {
                 HStack {
                     Spacer()
                     CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: exchange)
-                        .sheet(isPresented: self.$showCurrencySelection) {
+                        .sheet(isPresented: self.$showCurrencySelection, onDismiss: {
+                            if $didChange.wrappedValue {
+                                print("changed")
+                                didChange = false
+                            }
+                        }, content: {
                             CurrencySelectionView(
                                 showCurrencySelection: self.$showCurrencySelection,
-                                exchange: exchange, selection: $selection)
-                }.frame(height: 0)
+                                exchange: exchange, selection: $selection, didChange: $didChange)
+                        })
+                        .frame(height: 0)
 
                 // Secondary
                 HStack {
                     VStack {
                         // String(describing: baseValue*rate)
-                        ExchangeDisplayDetail(value: input > 0 ? "\(input*exchange.rate)" : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: true, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                        ExchangeDisplayDetail(value: input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                         Spacer()
                         
                     }
