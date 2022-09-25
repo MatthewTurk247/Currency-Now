@@ -44,6 +44,7 @@ struct CurrencySelectionView: View {
                                             print(results)
                                             exchange.rate = results
                                             didChange = true
+                                            $showCurrencySelection.wrappedValue = false
                                         }
                                     } catch let error {
                                         print(error.localizedDescription)
