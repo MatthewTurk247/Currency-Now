@@ -27,7 +27,7 @@ extension ExchangeRatesService {
     }
     
     static func convert(_ amount: Float, from base: Currency, to destination: Currency) {
-        var semaphore = DispatchSemaphore (value: 0)
+        let semaphore = DispatchSemaphore(value: 0)
 
         guard let url = URL(string: "convert", relativeTo: baseUrl) else { return }
         
@@ -35,9 +35,7 @@ extension ExchangeRatesService {
         
         components.queryItems?.append(URLQueryItem(name: "from", value: base.name))
         components.queryItems?.append(URLQueryItem(name: "to", value: destination.name))
-        print(components.url)
-        
-        "https://api.apilayer.com/exchangerates_data/convert?to=\(destination)&from=\(base)&amount=\(amount)"
+
         var request = URLRequest(url: url,timeoutInterval: Double.infinity)
         request.httpMethod = "GET"
         guard let apiKey = apiKey else { return }
@@ -48,7 +46,6 @@ extension ExchangeRatesService {
             print(String(describing: error))
             return
           }
-          print(String(data: data, encoding: .utf8)!)
           semaphore.signal()
         }
 

@@ -40,7 +40,6 @@ struct ExchangeDisplayDetail: View {
             Spacer()
             Button(action: {
                 self.selection = self.top ? "primary" : "secondary"
-                print(self.selection)
                 self.showCurrencySelection.toggle()
             }) {
                 HStack {

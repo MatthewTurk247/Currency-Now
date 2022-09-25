@@ -18,13 +18,13 @@ enum Currency: CaseIterable {
     case AED, AFN, ALL, AMD, ANG, AOA, ARS, AUD
     case AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF
     case BMD, BND, BOB, BRL, BSD, BTC, BTN, BWP
-    case BYN, BYR, BZD, CAD, CDF, CHF, CLF, CLP
-    case CNY, COP, CRC, CUC, CUP, CVE, CZK, DJF
+    case BYN, BZD, CAD, CDF, CHF, CLP
+    case CNY, COP, CRC, CUP, CVE, CZK, DJF
     case DKK, DOP, DZD, EGP, ERN, ETB, EUR, FJD
     case FKP, GBP, GEL, GGP, GHS, GIP, GMD, GNF
     case GTQ, GYD, HKD, HNL, HRK, HTG, HUF, IDR
-    case ILS, IMP, INR, IQD, IRR, ISK, JEP, JMD
-    case JOD, JPY, KES, KGS, KHR, KMF, KPW, KRW
+    case ILS, INR, IQD, IRR, ISK, JEP, JMD
+    case JOD, JPY, KES, KGS, KHR, KMF, KRW
     case KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL
     case LTL, LVL, LYD, MAD, MDL, MGA, MKD, MMK
     case MNT, MOP, MRO, MUR, MVR, MWK, MXN, MYR
@@ -34,8 +34,7 @@ enum Currency: CaseIterable {
     case SEK, SGD, SHP, SLL, SOS, SRD, STD, SVC
     case SYP, SZL, THB, TJS, TMT, TND, TOP, TRY
     case TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS
-    case VEF, VND, VUV, WST, XAF, XAG, XAU, XCD
-    case XDR, XOF, XPF, YER, ZAR, ZMK, ZMW, ZWL
+    case VEF, VND, VUV, WST, ZAR, ZMW, ZWL
     
     var home: Continent {
         switch self {
@@ -89,8 +88,6 @@ enum Currency: CaseIterable {
             return .africa
         case .BYN:
             return .europe
-        case .BYR:
-            return .europe
         case .BZD:
             return .southAmerica
         case .CAD:
@@ -99,8 +96,6 @@ enum Currency: CaseIterable {
             return .africa
         case .CHF:
             return .europe
-        case .CLF:
-            return .southAmerica
         case .CLP:
             return .southAmerica
         case .CNY:
@@ -108,8 +103,6 @@ enum Currency: CaseIterable {
         case .COP:
             return .southAmerica
         case .CRC:
-            return .northAmerica
-        case .CUC:
             return .northAmerica
         case .CUP:
             return .northAmerica
@@ -169,8 +162,6 @@ enum Currency: CaseIterable {
             return .asia
         case .ILS:
             return .asia
-        case .IMP:
-            return .europe
         case .INR:
             return .asia
         case .IQD:
@@ -195,8 +186,6 @@ enum Currency: CaseIterable {
             return .asia
         case .KMF:
             return .africa
-        case .KPW:
-            return .asia
         case .KRW:
             return .asia
         case .KWD:
@@ -351,25 +340,7 @@ enum Currency: CaseIterable {
             return .australia
         case .WST:
             return .australia
-        case .XAF:
-            return .africa
-        case .XAG:
-            return .metal
-        case .XAU:
-            return .metal
-        case .XCD:
-            return .northAmerica
-        case .XDR:
-            return .international
-        case .XOF:
-            return .africa
-        case .XPF:
-            return .australia
-        case .YER:
-            return .asia
         case .ZAR:
-            return .africa
-        case .ZMK:
             return .africa
         case .ZMW:
             return .africa
@@ -429,8 +400,6 @@ enum Currency: CaseIterable {
         case .BWP:
             return "Botswanan Pula"
         case .BYN:
-            return "New Belarusian Ruble"
-        case .BYR:
             return "Belarusian Ruble"
         case .BZD:
             return "Belize Dollar"
@@ -440,8 +409,6 @@ enum Currency: CaseIterable {
             return "Congolese Franc"
         case .CHF:
             return "Swiss Franc"
-        case .CLF:
-            return "Chilean Unit of Account (UF)"
         case .CLP:
             return "Chilean Peso"
         case .CNY:
@@ -450,8 +417,6 @@ enum Currency: CaseIterable {
             return "Colombian Peso"
         case .CRC:
             return "Costa Rican Col\u{00f3}n"
-        case .CUC:
-            return "Cuban Convertible Peso"
         case .CUP:
             return "Cuban Peso"
         case .CVE:
@@ -510,8 +475,6 @@ enum Currency: CaseIterable {
             return "Indonesian Rupiah"
         case .ILS:
             return "Israeli New Sheqel"
-        case .IMP:
-            return "Manx pound"
         case .INR:
             return "Indian Rupee"
         case .IQD:
@@ -536,8 +499,6 @@ enum Currency: CaseIterable {
             return "Cambodian Riel"
         case .KMF:
             return "Comorian Franc"
-        case .KPW:
-            return "North Korean Won"
         case .KRW:
             return "South Korean Won"
         case .KWD:
@@ -692,26 +653,8 @@ enum Currency: CaseIterable {
             return "Vanuatu Vatu"
         case .WST:
             return "Samoan Tala"
-        case .XAF:
-            return "CFA Franc BEAC"
-        case .XAG:
-            return "Silver (troy ounce)"
-        case .XAU:
-            return "Gold (troy ounce)"
-        case .XCD:
-            return "East Caribbean Dollar"
-        case .XDR:
-            return "Special Drawing Rights"
-        case .XOF:
-            return "CFA Franc BCEAO"
-        case .XPF:
-            return "CFP Franc"
-        case .YER:
-            return "Yemeni Rial"
         case .ZAR:
             return "South African Rand"
-        case .ZMK:
-            return "Zambian Kwacha (pre-2013)"
         case .ZMW:
             return "Zambian Kwacha"
         case .ZWL:
@@ -734,6 +677,23 @@ enum Continent {
     case northAmerica
     case southAmerica
     case cryptocurrency
-    case metal
-    case international
+    
+    var name: String {
+        switch self {
+        case .asia:
+            return "Asia"
+        case .australia:
+            return "Oceana"
+        case .africa:
+            return "Africa"
+        case .europe:
+            return "Europe"
+        case .northAmerica:
+            return "North America"
+        case .southAmerica:
+            return "South America"
+        case .cryptocurrency:
+            return "Cryptocurrency"
+        }
+    }
 }

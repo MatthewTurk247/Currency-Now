@@ -50,7 +50,6 @@ struct ContentView: View {
                     let conversion = try await exchange.convert(12.3)
                     
                     if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
-                        print(results)
                         exchange.rate = results
                         goingRate = results
                     }

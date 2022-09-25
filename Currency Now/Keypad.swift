@@ -74,7 +74,7 @@ extension Keypad {
         
         // When user taps "." if input without trailing zeros != input, do not add another "." to the string
         
-        print(inputString)
+        // print(inputString)
         input = Double(inputString) ?? input
     }
 

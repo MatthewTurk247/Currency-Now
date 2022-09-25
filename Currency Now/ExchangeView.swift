@@ -1,5 +1,5 @@
 //
-//  ExchangeDisplay.swift
+//  ExchangeView.swift
 //  Currency Now
 //
 //  Created by Matthew Turk on 7/26/20.
@@ -41,7 +41,8 @@ struct ExchangeView: View {
                     CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: exchange)
                         .sheet(isPresented: self.$showCurrencySelection, onDismiss: {
                             if $didChange.wrappedValue {
-                                print("changed")
+                                // changed
+                                input = 0
                                 didChange = false
                             }
                         }, content: {
@@ -51,25 +52,19 @@ struct ExchangeView: View {
                         })
                         .frame(height: 0)
 
-                // Secondary
-                HStack {
-                    VStack {
-                        // String(describing: baseValue*rate)
-                        ExchangeDisplayDetail(value: input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                    // Secondary
+                    HStack {
+                        VStack {
+                            // String(describing: baseValue*rate)
+                            ExchangeDisplayDetail(value: input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                            Spacer()
+                        }
                         Spacer()
-                        
                     }
-                    Spacer()
                 }
-                
             }
-            
         }
-        
     }
-    
-    }
-    
 }
 
 extension Double {
@@ -81,16 +76,3 @@ extension Double {
         return String(formatter.string(from: number) ?? "")
     }
 }
-
-/*struct ExchangeDisplay_Previews: PreviewProvider {
-    static var previews: some View {
-        ExchangeDisplay(
-            exchange: .constant(Exchange(
-                primary: Currency(name: "NOK", fullName: "Norwegian Krone", continent: .Europe),
-                secondary: Currency(name: "USD", fullName: "United States Dollar", continent: .NorthAmerica)
-            )), selection: .constant(""), showCurrencySelection: .constant(false), updateExchanges: {}
-        )
-            .background(Color.background)
-    }
-}
-*/

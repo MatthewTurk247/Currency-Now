@@ -17,8 +17,6 @@ struct CurrencySelectionView: View {
     private let groupedCurrencies = Dictionary(grouping: Currency.allCases, by: { $0.home })
     @Binding var didChange: Bool
     
-    // private let currencies = Currency.currencySections
-    
     var body: some View {
         
         NavigationView {
@@ -28,38 +26,35 @@ struct CurrencySelectionView: View {
                         Section {
                             ForEach(groupedCurrencies[key] ?? [], id: \.self) { currency in
                                 Button {
-                                    async {print(currency.name)
-                                    if self.selection == "primary" {
-                                        print("update base currency")
-                                        self.exchange.base = currency
-                                    } else {
-                                        print("update destination currency")
-                                        self.exchange.destination = currency
-                                    }
-                                    do {
-                                        exchange.clear()
-                                        let conversion = try await exchange.convert(12.3)
-                                        
-                                        if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
-                                            print(results)
-                                            exchange.rate = results
-                                            didChange = true
-                                            $showCurrencySelection.wrappedValue = false
+                                    async {
+                                        if self.selection == "primary" {
+                                            // update base currency
+                                            self.exchange.base = currency
+                                        } else {
+                                            // update destination currency
+                                            self.exchange.destination = currency
                                         }
-                                    } catch let error {
-                                        print(error.localizedDescription)
-                                    }}
+                                        do {
+                                            exchange.clear()
+                                            let conversion = try await exchange.convert(12.3)
+                                            
+                                            if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
+                                                exchange.rate = results
+                                                didChange = true
+                                                $showCurrencySelection.wrappedValue = false
+                                            }
+                                        } catch let error {
+                                            print(error.localizedDescription)
+                                        }
+                                    }
                                 } label: {
                                     CurrencySelectionRow(currency: currency)
                                 }
                             }.buttonStyle(PlainButtonStyle())
                         } header: {
-                            Text(verbatim: String(describing: key))
+                            Text(key.name)
                         }
                     }
-                }
-                .onAppear {
-                    print(groupedCurrencies)
                 }
                 .listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)

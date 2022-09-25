@@ -30,9 +30,9 @@ struct CurrencySelectionRow: View {
 //                    design: .rounded)
 //                )
 //                .foregroundColor(Color.textBody)
-            Image("\(currency.name.lowercased())")
+            Image(currency.symbol.lowercased())
                 .resizable()
-                .frame(width: 16, height: 16)
+                .frame(width: 32, height: 32)
         }
         .contentShape(Rectangle())
     }
