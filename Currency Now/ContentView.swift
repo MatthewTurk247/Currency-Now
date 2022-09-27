@@ -59,7 +59,7 @@ struct ContentView: View {
             }
             .background(Color.background)
             .edgesIgnoringSafeArea(.bottom)
-            .navigationBarTitle("Currency Now")
+            .navigationBarTitle("\(exchange.base.symbol) to \(exchange.destination.symbol)")
         }
     }
 }

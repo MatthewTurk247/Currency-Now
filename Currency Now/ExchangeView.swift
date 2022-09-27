@@ -29,7 +29,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: input > 0 ? String(describing: input) : input.withoutTrailingZeros(), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
+                        ExchangeDisplayDetail(value: didChange ? "Loading..." : input > 0 ? String(describing: input) : input.withoutTrailingZeros(), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
                         
                         
                     }
@@ -39,24 +39,18 @@ struct ExchangeView: View {
                 HStack {
                     Spacer()
                     CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: exchange)
-                        .sheet(isPresented: self.$showCurrencySelection, onDismiss: {
-                            if $didChange.wrappedValue {
-                                // changed
-                                input = 0
-                                didChange = false
-                            }
-                        }, content: {
+                        .sheet(isPresented: self.$showCurrencySelection) {
                             CurrencySelectionView(
                                 showCurrencySelection: self.$showCurrencySelection,
-                                exchange: exchange, selection: $selection, didChange: $didChange)
-                        })
+                                exchange: exchange, selection: $selection, isLoading: $didChange)
+                        }
                         .frame(height: 0)
 
                     // Secondary
                     HStack {
                         VStack {
                             // String(describing: baseValue*rate)
-                            ExchangeDisplayDetail(value: input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                            ExchangeDisplayDetail(value: didChange ? "Loading..." : input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
                             Spacer()
                         }
                         Spacer()

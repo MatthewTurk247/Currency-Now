@@ -15,7 +15,8 @@ struct CurrencySelectionView: View {
     @ObservedObject var exchange: Exchange
     @Binding var selection: String
     private let groupedCurrencies = Dictionary(grouping: Currency.allCases, by: { $0.home })
-    @Binding var didChange: Bool
+    @Binding var isLoading: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         
@@ -26,6 +27,7 @@ struct CurrencySelectionView: View {
                         Section {
                             ForEach(groupedCurrencies[key] ?? [], id: \.self) { currency in
                                 Button {
+                                    $isLoading.wrappedValue = true
                                     async {
                                         if self.selection == "primary" {
                                             // update base currency
@@ -40,13 +42,14 @@ struct CurrencySelectionView: View {
                                             
                                             if let info = conversion["info"] as? [String: Any], let results = info["rate"] as? Double {
                                                 exchange.rate = results
-                                                didChange = true
-                                                $showCurrencySelection.wrappedValue = false
+                                                $isLoading.wrappedValue = false
                                             }
                                         } catch let error {
                                             print(error.localizedDescription)
                                         }
                                     }
+                                    
+                                    presentationMode.wrappedValue.dismiss()
                                 } label: {
                                     CurrencySelectionRow(currency: currency)
                                 }
