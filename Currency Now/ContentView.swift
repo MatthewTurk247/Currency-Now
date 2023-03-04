@@ -30,7 +30,7 @@ struct ContentView: View {
     @State private var showCurrencySelection: Bool = false
     @State private var showErrorAlert: Bool = false
     @StateObject private var exchange = Exchange(base: .GBP, destination: .USD)
-    @State private var selection: String = "primary"
+    @State private var isPrimarySelection: Bool = true
     @State private var baseValue: Double = 0
     @State private var goingRate: Double = 1
 

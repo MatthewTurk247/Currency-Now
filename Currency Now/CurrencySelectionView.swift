@@ -13,13 +13,12 @@ struct CurrencySelectionView: View {
     
     @Binding var showCurrencySelection: Bool
     @ObservedObject var exchange: Exchange
-    @Binding var selection: String
+    @Binding var selection: Bool
     private let groupedCurrencies = Dictionary(grouping: Currency.allCases, by: { $0.home })
     @Binding var isLoading: Bool
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-        
         NavigationView {
             VStack(spacing: 0) {
                 List {
@@ -28,8 +27,8 @@ struct CurrencySelectionView: View {
                             ForEach(groupedCurrencies[key] ?? [], id: \.self) { currency in
                                 Button {
                                     $isLoading.wrappedValue = true
-                                    async {
-                                        if self.selection == "primary" {
+                                    Task {
+                                        if self.selection {
                                             // update base currency
                                             self.exchange.base = currency
                                         } else {
@@ -61,7 +60,6 @@ struct CurrencySelectionView: View {
                 }
                 .listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
-                
             }
             .navigationBarTitle(Text("Select Currency"))
         }

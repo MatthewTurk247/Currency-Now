@@ -14,7 +14,7 @@ struct ExchangeDisplayDetail: View {
     let name: String
     let code: String
     let top: Bool
-    @Binding var selection: String
+    @Binding var selection: Bool
     @Binding var showCurrencySelection: Bool
     @State var primaryOffsetX: CGFloat = 0
     
@@ -39,7 +39,7 @@ struct ExchangeDisplayDetail: View {
             .padding(Constants.large)
             Spacer()
             Button(action: {
-                self.selection = self.top ? "primary" : "secondary"
+                self.selection = self.top
                 self.showCurrencySelection.toggle()
             }) {
                 HStack {
@@ -55,6 +55,6 @@ struct ExchangeDisplayDetail: View {
 
 struct ExchangeDisplayDetail_Previews: PreviewProvider {
     static var previews: some View {
-        ExchangeDisplayDetail(value: "0", name: "Norwegian Krone", code: "NOK", top: true, selection: .constant(""), showCurrencySelection: .constant(false))
+        ExchangeDisplayDetail(value: "0", name: "Norwegian Krone", code: "NOK", top: true, selection: .constant(true), showCurrencySelection: .constant(false))
     }
 }

@@ -14,7 +14,7 @@ struct ExchangeView: View {
     @ObservedObject var exchange: Exchange
     @Binding var input: Double
     @Binding var rate: Double
-    @State private var selection = ""
+    @State private var isPrimarySelection: Bool = false
     @State private var showCurrencySelection: Bool = false
     @State private var didChange: Bool = false
     
@@ -29,7 +29,7 @@ struct ExchangeView: View {
                     VStack {
                         
                         Spacer()
-                        ExchangeDisplayDetail(value: didChange ? "Loading..." : input > 0 ? String(describing: input) : input.withoutTrailingZeros(), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $selection, showCurrencySelection: $showCurrencySelection)
+                        ExchangeDisplayDetail(value: didChange ? "Loading..." : input > 0 ? String(describing: input) : input.withoutTrailingZeros(), name: exchange.base.name, code: exchange.base.symbol, top: true, selection: $isPrimarySelection, showCurrencySelection: $showCurrencySelection)
                         
                         
                     }
@@ -38,11 +38,11 @@ struct ExchangeView: View {
                 .background(Color.backgroundAccent)
                 HStack {
                     Spacer()
-                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $selection, exchange: exchange)
+                    CurrencySwap(showCurrencySelection: $showCurrencySelection, selection: $isPrimarySelection, exchange: exchange)
                         .sheet(isPresented: self.$showCurrencySelection) {
                             CurrencySelectionView(
                                 showCurrencySelection: self.$showCurrencySelection,
-                                exchange: exchange, selection: $selection, isLoading: $didChange)
+                                exchange: exchange, selection: $isPrimarySelection, isLoading: $didChange)
                         }
                         .frame(height: 0)
 
@@ -50,7 +50,7 @@ struct ExchangeView: View {
                     HStack {
                         VStack {
                             // String(describing: baseValue*rate)
-                            ExchangeDisplayDetail(value: didChange ? "Loading..." : input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$selection, showCurrencySelection: self.$showCurrencySelection)
+                            ExchangeDisplayDetail(value: didChange ? "Loading..." : input > 0 ? String(format: "%.2f", input*exchange.rate) : (input*exchange.rate).withoutTrailingZeros(), name: exchange.destination.name, code: exchange.destination.symbol, top: false, selection: self.$isPrimarySelection, showCurrencySelection: self.$showCurrencySelection)
                             Spacer()
                         }
                         Spacer()
